@@ -1,4 +1,4 @@
-unit Unit3;
+unit uFrmPedidosHistorico;
 
 interface
 
@@ -25,6 +25,6 @@ implementation
 
 {$R *.dfm}
 
-uses Unit1;
+uses uFrmPrincipal;
 
 end.

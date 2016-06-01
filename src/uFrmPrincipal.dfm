@@ -259,7 +259,6 @@ object frmPrincipal: TfrmPrincipal
             item
               Expanded = False
               FieldName = 'VALOR_FRETE'
-              Width = 64
               Visible = True
             end>
         end

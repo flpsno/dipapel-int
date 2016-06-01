@@ -1,4 +1,4 @@
-unit Unit2;
+unit uFrmPrincipal;
 
 interface
 
@@ -64,7 +64,7 @@ implementation
 
 {$R *.dfm}
 
-uses Unit1, Unit3;
+uses uDtmPrincipal, uFrmPedidosHistorico;
 
 procedure TfrmPrincipal.Button1Click(Sender: TObject);
 begin

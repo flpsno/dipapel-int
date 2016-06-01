@@ -21,8 +21,6 @@ object frmPedidosHistorico: TfrmPedidosHistorico
     Height = 38
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 312
-    ExplicitWidth = 477
     object btnOk: TButton
       Left = 648
       Top = 6
