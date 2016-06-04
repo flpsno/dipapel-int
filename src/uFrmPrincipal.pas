@@ -68,10 +68,10 @@ uses uDtmPrincipal, uFrmPedidosHistorico;
 
 procedure TfrmPrincipal.Button1Click(Sender: TObject);
 begin
-  if not dtmPrincipal.qryPedidos.Active then
-    dtmPrincipal.qryPedidos.Open()
+  if not dtmPrincipal.qryVwPedidos.Active then
+    dtmPrincipal.qryVwPedidos.Open()
   else
-    dtmPrincipal.qryPedidos.Refresh;
+    dtmPrincipal.qryVwPedidos.Refresh;
 end;
 
 procedure TfrmPrincipal.DBGrid1DblClick(Sender: TObject);
@@ -206,7 +206,7 @@ begin
     begin
 
       // consulta se codigo elo7 existe, se não existe, insere
-      if fcPedidoNovo(cdsPrincipalPEDIDO_ELO7.AsString) then
+      if not dtmPrincipal.fcPedidoExiste(cdsPrincipalPEDIDO_ELO7.AsString) then
       begin
         dtmPrincipal.sbInserePedido(cdsPrincipalPEDIDO_ELO7.AsString,
           cdsPrincipalSTATUS_ELO7.AsString, cdsPrincipalDATA_PEDIDO.Value,
@@ -218,22 +218,21 @@ begin
       end
 
       // consulta se codigo elo7 existe e se campos mudaram de valor
-      else if fcAtualizaPedido(cdsPrincipalPEDIDO_ELO7.AsString,
+      else {if fcAtualizaPedido(cdsPrincipalPEDIDO_ELO7.AsString,
         cdsPrincipalSTATUS_ELO7.AsString, cdsPrincipalTIPO_FRETE.AsString,
         cdsPrincipalCOMPRADOR.AsString,
         cdsPrincipalVALOR_TOTAL.Value, cdsPrincipalVALOR_FRETE.Value,
-        cdsPrincipalTOTAL_ITENS.AsInteger) then
+        cdsPrincipalTOTAL_ITENS.AsInteger) then }
       begin
-        if dtmPrincipal.qryPedidos.Locate('PEDIDO_ELO7', cdsPrincipalPEDIDO_ELO7.AsString, []) then
-        begin
-          dtmPrincipal.sbAtualizaPedido(cdsPrincipalPEDIDO_ELO7.AsString,
+//        if dtmPrincipal.qryPedidos.Locate('PEDIDO_ELO7', cdsPrincipalPEDIDO_ELO7.AsString, []) then
+//        begin
+        if dtmPrincipal.fcAtualizaPedido(cdsPrincipalPEDIDO_ELO7.AsString,
             cdsPrincipalSTATUS_ELO7.AsString, cdsPrincipalDATA_PEDIDO.Value,
             cdsPrincipalTOTAL_ITENS.Value, cdsPrincipalVALOR_TOTAL.Value,
             cdsPrincipalTIPO_FRETE.AsString, cdsPrincipalVALOR_FRETE.Value,
-            cdsPrincipalCOMPRADOR.AsString);
-
+            cdsPrincipalCOMPRADOR.AsString) then
           Inc(iRegistrosAtualizados);
-        end;
+//        end;
       end;
 
       pb1.Position := cdsPrincipal.RecNo +1;

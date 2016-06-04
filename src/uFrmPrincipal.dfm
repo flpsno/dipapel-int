@@ -196,17 +196,13 @@ object frmPrincipal: TfrmPrincipal
       object tsPedidos: TTabSheet
         Caption = 'Pedidos'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object DBGrid1: TDBGrid
           Left = 0
           Top = 41
           Width = 730
           Height = 538
           Align = alClient
-          DataSource = dtmPrincipal.dtsPedidos
+          DataSource = dtmPrincipal.dtsVwPedidos
           TabOrder = 1
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
@@ -259,6 +255,7 @@ object frmPrincipal: TfrmPrincipal
             item
               Expanded = False
               FieldName = 'VALOR_FRETE'
+              Width = 64
               Visible = True
             end>
         end
@@ -283,10 +280,6 @@ object frmPrincipal: TfrmPrincipal
       object tsConfig: TTabSheet
         Caption = 'Configura'#231#227'o'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
       end
     end
   end
