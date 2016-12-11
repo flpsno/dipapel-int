@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.StdCtrls, Data.DB, Datasnap.DBClient, Vcl.CheckLst,
-  System.Actions, Vcl.ActnList;
+  System.Actions, Vcl.ActnList, MIDASLIB, Vcl.Mask, Vcl.DBCtrls, Vcl.DBActns,
+  Vcl.Buttons, Vcl.FileCtrl, Pedido;
 
 type
   TfrmPrincipal = class(TForm)
@@ -34,25 +35,43 @@ type
     dbgPrincipal: TDBGrid;
     pnlResultado: TPanel;
     pnl1: TPanel;
-    clbPrincipal: TCheckListBox;
     pb1: TProgressBar;
     edtCaminhoArquivo: TEdit;
     btnArquivo: TButton;
     btnReset: TButton;
     btnProcessa: TButton;
-    actPrincipal: TActionList;
+    actReset: TActionList;
     actCarregaArquivo: TAction;
+    stbPrincipal: TStatusBar;
+    lbl1: TLabel;
+    btnDiretorio: TBitBtn;
+    btn2: TBitBtn;
+    actCancelConfig: TDataSetCancel;
+    actPostConfig: TDataSetPost;
+    btn1: TBitBtn;
+    actCarregaDiretorioDest: TAction;
+    dbePASTA_DESTINO: TDBEdit;
+    dbePASTA_ORIGEM: TDBEdit;
+    lbl2: TLabel;
+    btnCarregaDiretorio: TBitBtn;
+    actCarregaDiretorioOrig: TAction;
+    dbg1: TDBGrid;
+    act1: TAction;
+    actProcessaArquivo: TAction;
     procedure Button1Click(Sender: TObject);
     procedure btnArquivoClick(Sender: TObject);
-    procedure btnProcessaClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure btnResetClick(Sender: TObject);
     procedure DBGrid1DblClick(Sender: TObject);
     procedure actCarregaArquivoExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure actCarregaDiretorioDestExecute(Sender: TObject);
+    procedure actCarregaDiretorioOrigExecute(Sender: TObject);
+    procedure act1Execute(Sender: TObject);
+    procedure act1Update(Sender: TObject);
+    procedure actProcessaArquivoExecute(Sender: TObject);
+    procedure actProcessaArquivoUpdate(Sender: TObject);
   private
     { Private declarations }
-    function fcPedidoNovo(const pCodigo: string): Boolean;
-    function fcAtualizaPedido(const pCodigo, pStatusElo7, pTipoFrete, pComprador: string; const pValorTotal, pValorFrete: Double; const pTotalItens: Integer): Boolean;
   public
     { Public declarations }
   end;
@@ -93,6 +112,18 @@ begin
     FreeAndNil(frmPedidosHis);
   end;
 
+end;
+
+procedure TfrmPrincipal.act1Execute(Sender: TObject);
+begin
+  edtCaminhoArquivo.Text := '';
+  cdsPrincipal.EmptyDataSet;
+  pb1.Position := 0;
+end;
+
+procedure TfrmPrincipal.act1Update(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := edtCaminhoArquivo.Text <> '';
 end;
 
 procedure TfrmPrincipal.actCarregaArquivoExecute(Sender: TObject);
@@ -160,33 +191,39 @@ begin
 
 end;
 
-procedure TfrmPrincipal.btnArquivoClick(Sender: TObject);
+procedure TfrmPrincipal.actCarregaDiretorioDestExecute(Sender: TObject);
 var
-  SR: TSearchRec;
+  chosenDirectory: string;
 begin
-  if odgPrincipal.Execute then
+  if selectdirectory('Selecione o diretório dos importados', 'C:\', chosenDirectory) then
   begin
-    edtCaminhoArquivo.Text := odgPrincipal.FileName;
-
-    if FindFirst(ExtractFileDir(odgPrincipal.FileName) + '\*.csv', faAnyFile, SR) = 0 then
-    begin
-      repeat
-        if (SR.Attr <> faDirectory) then
-        begin
-          clbPrincipal.AddItem(SR.Name, Self);
-        end;
-      until FindNext(SR) <> 0;
-      FindClose(SR);
-    end;
-
-    actCarregaArquivo.Execute;
+    if dtmPrincipal.cdsConfig.IsEmpty then
+      dtmPrincipal.cdsConfig.Append
+    else
+      dtmPrincipal.cdsConfig.Edit;
+    dtmPrincipal.cdsConfigPASTA_DESTINO.AsString := chosenDirectory;
   end;
 end;
 
-procedure TfrmPrincipal.btnProcessaClick(Sender: TObject);
+procedure TfrmPrincipal.actCarregaDiretorioOrigExecute(Sender: TObject);
+var
+  chosenDirectory: string;
+begin
+  if selectdirectory('Selecione o diretório dos importados', 'C:\', chosenDirectory) then
+  begin
+    if dtmPrincipal.cdsConfig.IsEmpty then
+      dtmPrincipal.cdsConfig.Append
+    else
+      dtmPrincipal.cdsConfig.Edit;
+    dtmPrincipal.cdsConfigPASTA_ORIGEM.AsString := chosenDirectory;
+  end;
+end;
+
+procedure TfrmPrincipal.actProcessaArquivoExecute(Sender: TObject);
 var
   iRegistrosNovos, iRegistrosAtualizados: Integer;
-  sArquivo: string;
+  sArquivo, sArquivoFinal: string;
+  objPedido: TPedido;
 begin
   if not cdsPrincipal.IsEmpty then
   begin
@@ -204,35 +241,23 @@ begin
     cdsPrincipal.First;
     while not cdsPrincipal.Eof do
     begin
+      objPedido := TPedido.Create;
+      try
+        objPedido.PEDIDO_ELO7 := cdsPrincipalPEDIDO_ELO7.AsString;
+        objPedido.STATUS_ELO7 := cdsPrincipalSTATUS_ELO7.AsString;
+        objPedido.DATA_PEDIDO := cdsPrincipalDATA_PEDIDO.AsDateTime;
+        objPedido.TOTAL_ITENS := cdsPrincipalTOTAL_ITENS.AsInteger;
+        objPedido.VALOR_TOTAL := cdsPrincipalVALOR_TOTAL.AsFloat;
+        objPedido.TIPO_FRETE := cdsPrincipalTIPO_FRETE.AsString;
+        objPedido.VALOR_FRETE := cdsPrincipalVALOR_FRETE.AsFloat;
+        objPedido.COMPRADOR := cdsPrincipalCOMPRADOR.AsString;
 
-      // consulta se codigo elo7 existe, se não existe, insere
-      if not dtmPrincipal.fcPedidoExiste(cdsPrincipalPEDIDO_ELO7.AsString) then
-      begin
-        dtmPrincipal.sbInserePedido(cdsPrincipalPEDIDO_ELO7.AsString,
-          cdsPrincipalSTATUS_ELO7.AsString, cdsPrincipalDATA_PEDIDO.Value,
-          cdsPrincipalTOTAL_ITENS.Value, cdsPrincipalVALOR_TOTAL.Value,
-          cdsPrincipalTIPO_FRETE.AsString, cdsPrincipalVALOR_FRETE.Value,
-          cdsPrincipalCOMPRADOR.AsString);
-
-        Inc(iRegistrosNovos);
-      end
-
-      // consulta se codigo elo7 existe e se campos mudaram de valor
-      else {if fcAtualizaPedido(cdsPrincipalPEDIDO_ELO7.AsString,
-        cdsPrincipalSTATUS_ELO7.AsString, cdsPrincipalTIPO_FRETE.AsString,
-        cdsPrincipalCOMPRADOR.AsString,
-        cdsPrincipalVALOR_TOTAL.Value, cdsPrincipalVALOR_FRETE.Value,
-        cdsPrincipalTOTAL_ITENS.AsInteger) then }
-      begin
-//        if dtmPrincipal.qryPedidos.Locate('PEDIDO_ELO7', cdsPrincipalPEDIDO_ELO7.AsString, []) then
-//        begin
-        if dtmPrincipal.fcAtualizaPedido(cdsPrincipalPEDIDO_ELO7.AsString,
-            cdsPrincipalSTATUS_ELO7.AsString, cdsPrincipalDATA_PEDIDO.Value,
-            cdsPrincipalTOTAL_ITENS.Value, cdsPrincipalVALOR_TOTAL.Value,
-            cdsPrincipalTIPO_FRETE.AsString, cdsPrincipalVALOR_FRETE.Value,
-            cdsPrincipalCOMPRADOR.AsString) then
-          Inc(iRegistrosAtualizados);
-//        end;
+        case objPedido.InserePedido of
+          1: Inc(iRegistrosNovos);
+          2: Inc(iRegistrosAtualizados);
+        end;
+      finally
+        objPedido.Free;
       end;
 
       pb1.Position := cdsPrincipal.RecNo +1;
@@ -245,8 +270,15 @@ begin
 //    dtmPrincipal.qryResultadoImport.ParamByName('pData').AsDate := Now;
     dtmPrincipal.qryResultadoImport.Open();
 
+    sArquivoFinal := Copy(sArquivo, 1,Length(sArquivo) -4)
+      + '_' + FormatDateTime('yyyymmdd', Now)
+      + ExtractFileExt(sArquivo);
+
     // registra log com o nome do arquivo e teve registros novos ou atualizados
-    dtmPrincipal.sbInsereLog(sArquivo, iRegistrosNovos, iRegistrosAtualizados);
+    dtmPrincipal.sbInsereLog(sArquivoFinal, iRegistrosNovos, iRegistrosAtualizados);
+
+    if DirectoryExists(dtmPrincipal.cdsConfigPASTA_DESTINO.AsString) then
+      MoveFile(PChar(edtCaminhoArquivo.Text), PChar(dtmPrincipal.cdsConfigPASTA_DESTINO.AsString + '\' + sArquivoFinal));
 
     ShowMessage('Concluído!!!' + #13
       + 'Registros Inseridos: ' + IntToStr(iRegistrosNovos) + #13
@@ -254,57 +286,33 @@ begin
   end;
 end;
 
-procedure TfrmPrincipal.btnResetClick(Sender: TObject);
+procedure TfrmPrincipal.actProcessaArquivoUpdate(Sender: TObject);
 begin
-  edtCaminhoArquivo.Text := '';
-  cdsPrincipal.EmptyDataSet;
-  pb1.Position := 0;
-
+  (Sender as TAction).Enabled := FileExists(edtCaminhoArquivo.Text)
+    and not cdsPrincipal.IsEmpty;
 end;
 
-function TfrmPrincipal.fcAtualizaPedido(const pCodigo, pStatusElo7,
-  pTipoFrete, pComprador: string; const pValorTotal, pValorFrete: Double;
-  const pTotalItens: Integer): Boolean;
+procedure TfrmPrincipal.btnArquivoClick(Sender: TObject);
 begin
-  with dtmPrincipal do
+  if DirectoryExists(dtmPrincipal.PathOrigem) then
+    odgPrincipal.InitialDir := dtmPrincipal.PathOrigem;
+
+  if odgPrincipal.Execute then
   begin
-    qryGeral.Close;
-    qryGeral.SQL.Clear;
-    qryGeral.SQL.Text :=
-      'SELECT PEDIDO_ELO7, STATUS_ELO7, TIPO_FRETE, VALOR_TOTAL, VALOR_FRETE, '
-      + 'TOTAL_ITENS, COMPRADOR '
-      + 'FROM tblpedidos WHERE PEDIDO_ELO7 = :pCodigo';
-    qryGeral.ParamByName('pCodigo').AsString := pCodigo;
-    qryGeral.Open();
+    edtCaminhoArquivo.Text := odgPrincipal.FileName;
 
-    if (qryGeral.FieldByName('STATUS_ELO7').AsString <> pStatusElo7)
-      or (qryGeral.FieldByName('TIPO_FRETE').AsString <> pTipoFrete)
-      or (qryGeral.FieldByName('VALOR_TOTAL').AsFloat <> pValorTotal)
-      or (qryGeral.FieldByName('VALOR_FRETE').AsFloat <> pValorFrete)
-      or (qryGeral.FieldByName('TOTAL_ITENS').AsInteger <> pTotalItens)
-      or (qryGeral.FieldByName('COMPRADOR').AsString <> pComprador) then
-      Result := True
-    else
-      Result := False;
+//    if FindFirst(ExtractFileDir(odgPrincipal.FileName) + '\*.csv', faAnyFile, SR) = 0 then
+//    begin
+//      repeat
+//        if (SR.Attr <> faDirectory) then
+//        begin
+//          clbPrincipal.AddItem(SR.Name, Self);
+//        end;
+//      until FindNext(SR) <> 0;
+//      FindClose(SR);
+//    end;
 
-    qryGeral.Close;
-  end;
-end;
-
-function TfrmPrincipal.fcPedidoNovo(const pCodigo: string): Boolean;
-begin
-  with dtmPrincipal do
-  begin
-    qryGeral.Close;
-    qryGeral.SQL.Clear;
-    qryGeral.SQL.Text :=
-      'SELECT IDPEDIDO FROM tblpedidos WHERE PEDIDO_ELO7 = :pCodigo';
-    qryGeral.ParamByName('pCodigo').AsString := pCodigo;
-    qryGeral.Open();
-
-    Result := qryGeral.IsEmpty;
-
-    qryGeral.Close;
+    actCarregaArquivo.Execute;
   end;
 end;
 
@@ -312,6 +320,13 @@ procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
   cdsPrincipal.CreateDataSet;
   cdsPrincipal.Open;
+end;
+
+procedure TfrmPrincipal.FormShow(Sender: TObject);
+begin
+  PageControl1.ActivePageIndex := 0;
+  stbPrincipal.Panels[0].Text := 'Server DB: ' + dtmPrincipal.Server;
+  stbPrincipal.Panels[1].Text := 'versão: ' + dtmPrincipal.Server;
 end;
 
 end.

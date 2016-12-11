@@ -1,0 +1,18 @@
+program Project2;
+
+uses
+  Vcl.Forms,
+  Unit2 in 'uFrmPrincipal.pas' {frmPrincipal},
+  Unit1 in 'uDtmPrincipal.pas' {dtmPrincipal: TDataModule},
+  Unit3 in 'Unit3.pas' {frmPedidosHistorico};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TfrmPrincipal, frmPrincipal);
+  Application.CreateForm(TdtmPrincipal, dtmPrincipal);
+  Application.CreateForm(TfrmPedidosHistorico, frmPedidosHistorico);
+  Application.Run;
+end.

@@ -1,17 +1,17 @@
 object dtmPrincipal: TdtmPrincipal
   OldCreateOrder = False
   OnCreate = DataModuleCreate
+  OnDestroy = DataModuleDestroy
   Height = 654
   Width = 659
   object conPrincipal: TFDConnection
     Params.Strings = (
       'DriverID=MySQL'
-      'Database=dipapeldb'
-      'User_Name=dipapeldb'
+      'Database=dipapeldb_hm'
+      'User_Name=dipapeldb_hm'
       'Password=metal001'
-      'Server=127.0.0.1'
+      'Server=dipapeldb_hm.mysql.dbaas.com.br'
       'ApplicationName=teste')
-    Connected = True
     LoginPrompt = False
     Left = 32
     Top = 16
@@ -156,8 +156,8 @@ object dtmPrincipal: TdtmPrincipal
   object qryResultadoImport: TFDQuery
     Connection = conPrincipal
     SQL.Strings = (
-      'select * from vwpedidoshis'
-      'where cast(data_historico as date) = cast(now() as date)'
+      'select * from vwpedidoshis a'
+      'where DATA_HISTORICO >=  date_add(now(), INTERVAL -5 DAY)'
       'order by data_historico desc')
     Left = 40
     Top = 216
@@ -207,7 +207,7 @@ object dtmPrincipal: TdtmPrincipal
     Top = 216
   end
   object FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink
-    VendorLib = 'C:\Projetos\dipapel_integra\trunk\src\libmysql.dll'
+    VendorLib = 'C:\Projetos\dipapel_integra\src\libmysql.dll'
     Left = 136
     Top = 16
   end
@@ -429,7 +429,7 @@ object dtmPrincipal: TdtmPrincipal
     end
     object cdsLogsARQUIVO: TStringField
       FieldName = 'ARQUIVO'
-      Size = 50
+      Size = 200
     end
     object cdsLogsREGISTROS_INSERIDOS: TSmallintField
       FieldName = 'REGISTROS_INSERIDOS'
@@ -450,6 +450,7 @@ object dtmPrincipal: TdtmPrincipal
       FieldName = 'IDLOG'
       Origin = 'IDLOG'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object qryLogsDATA_LOG: TDateTimeField
       AutoGenerateValue = arDefault
@@ -482,19 +483,197 @@ object dtmPrincipal: TdtmPrincipal
     Aggregates = <>
     Params = <>
     ProviderName = 'dspSelect'
+    AfterPost = cdsSelectAfterPost
     Left = 48
-    Top = 520
+    Top = 536
   end
   object qrySelect: TFDQuery
     Connection = conPrincipal
     SQL.Strings = (
       'select * from tbllogs')
     Left = 152
-    Top = 520
+    Top = 536
   end
   object dspSelect: TDataSetProvider
     DataSet = qrySelect
     Left = 256
-    Top = 520
+    Top = 536
+  end
+  object cdsConfig: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'dspConfig'
+    AfterPost = cdsConfigAfterPost
+    Left = 48
+    Top = 480
+    object cdsConfigIDCONFIG: TAutoIncField
+      FieldName = 'IDCONFIG'
+      ReadOnly = True
+    end
+    object cdsConfigPASTA_ORIGEM: TStringField
+      FieldName = 'PASTA_ORIGEM'
+      Size = 50
+    end
+    object cdsConfigPASTA_DESTINO: TStringField
+      FieldName = 'PASTA_DESTINO'
+      Size = 50
+    end
+  end
+  object qryConfig: TFDQuery
+    Connection = conPrincipal
+    SQL.Strings = (
+      'select * from tblconfig')
+    Left = 152
+    Top = 480
+    object qryConfigIDCONFIG: TFDAutoIncField
+      FieldName = 'IDCONFIG'
+      Origin = 'IDCONFIG'
+      ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
+    end
+    object qryConfigPASTA_ORIGEM: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'PASTA_ORIGEM'
+      Origin = 'PASTA_ORIGEM'
+      Size = 50
+    end
+    object qryConfigPASTA_DESTINO: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'PASTA_DESTINO'
+      Origin = 'PASTA_DESTINO'
+      Size = 50
+    end
+  end
+  object dspConfig: TDataSetProvider
+    DataSet = qryConfig
+    Left = 256
+    Top = 480
+  end
+  object dtsConfig: TDataSource
+    DataSet = cdsConfig
+    Left = 336
+    Top = 480
+  end
+  object cdsPedidosPos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'dspPedidosPos'
+    AfterPost = cdsPedidosPosAfterPost
+    Left = 48
+    Top = 592
+    object cdsPedidosPosIDPEDIDOSPOS: TAutoIncField
+      FieldName = 'IDPEDIDOSPOS'
+      ReadOnly = True
+    end
+    object cdsPedidosPosIDPEDIDO: TIntegerField
+      FieldName = 'IDPEDIDO'
+      Required = True
+    end
+    object cdsPedidosPosPOSICAO: TSmallintField
+      FieldName = 'POSICAO'
+      Required = True
+    end
+  end
+  object qryPedidosPos: TFDQuery
+    Connection = conPrincipal
+    SQL.Strings = (
+      'select * from tblpedidospos')
+    Left = 152
+    Top = 592
+    object qryPedidosPosIDPEDIDOSPOS: TFDAutoIncField
+      FieldName = 'IDPEDIDOSPOS'
+      ReadOnly = True
+    end
+    object qryPedidosPosIDPEDIDO: TIntegerField
+      FieldName = 'IDPEDIDO'
+      Origin = 'IDPEDIDO'
+      Required = True
+    end
+    object qryPedidosPosPOSICAO: TSmallintField
+      FieldName = 'POSICAO'
+      Origin = 'POSICAO'
+      Required = True
+    end
+  end
+  object dspPedidosPos: TDataSetProvider
+    DataSet = qryPedidosPos
+    Left = 256
+    Top = 592
+  end
+  object stpInsereAtualizaPedidos: TFDStoredProc
+    Connection = conPrincipal
+    StoredProcName = 'spinsere_atualiza_pedidos'
+    Left = 480
+    Top = 296
+    ParamData = <
+      item
+        Position = 1
+        Name = 'pPEDIDO_ELO7'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 15
+      end
+      item
+        Position = 2
+        Name = 'pSTATUS_ELO7'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 50
+      end
+      item
+        Position = 3
+        Name = 'pDATA_PEDIDO'
+        DataType = ftDate
+        ParamType = ptInput
+      end
+      item
+        Position = 4
+        Name = 'pTOTAL_ITENS'
+        DataType = ftSmallint
+        ParamType = ptInput
+      end
+      item
+        Position = 5
+        Name = 'pVALOR_TOTAL'
+        DataType = ftBCD
+        Precision = 15
+        NumericScale = 2
+        ParamType = ptInput
+      end
+      item
+        Position = 6
+        Name = 'pTIPO_FRETE'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 50
+      end
+      item
+        Position = 7
+        Name = 'pVALOR_FRETE'
+        DataType = ftBCD
+        Precision = 15
+        NumericScale = 2
+        ParamType = ptInput
+      end
+      item
+        Position = 8
+        Name = 'pCOMPRADOR'
+        DataType = ftString
+        ParamType = ptInput
+        Size = 100
+      end
+      item
+        Position = 9
+        Name = 'RESULTADO'
+        DataType = ftInteger
+        ParamType = ptOutput
+      end
+      item
+        Position = 10
+        Name = 'RESULTADO_STR'
+        DataType = ftString
+        ParamType = ptOutput
+        Size = 100
+      end>
   end
 end

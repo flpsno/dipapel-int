@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2014/05/18 20:59:41.000.256,=C:\Users\gtr\Documents\RAD Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2014/05/24 08:35:09.000.401,=C:\Users\gtr\Documents\RAD Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2014/05/24 08:48:28.000.962,=C:\Users\gtr\Documents\RAD Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2014/05/24 08:52:07.000.598,=C:\Users\gtr\Documents\RAD Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2014/05/30 14:44:27.000.535,=C:\Users\gtr\Documents\RAD Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2016/05/06 10:25:22.000.851,=C:\Users\gtr\Documents\RAD Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2016/05/06 10:26:09.000.354,C:\Users\gtr\Documents\project2\Unit2.dfm=C:\Users\gtr\Documents\RAD Studio\Projects\Unit2.dfm</Transaction>
+    <Transaction>2016/05/06 10:26:09.000.354,C:\Users\gtr\Documents\project2\Unit2.pas=C:\Users\gtr\Documents\RAD Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2016/05/06 10:26:11.000.284,C:\Users\gtr\Documents\project2\Project2.dproj=C:\Users\gtr\Documents\RAD Studio\Projects\Project2.dproj</Transaction>
+    <Transaction>2016/05/06 10:30:08.000.145,=C:\Users\gtr\Documents\project2\Unit1.pas</Transaction>
+    <Transaction>2016/05/14 11:57:38.000.572,=Z:\D\Felipe\project2\src\Unit3.pas</Transaction>
+    <Transaction>2016/12/07 21:12:03.000.087,=C:\Projetos\dipapel_integra\trunk\src\Unit1.pas</Transaction>
+    <Transaction>2016/12/07 21:12:46.000.348,C:\Projetos\dipapel_integra\trunk\src\Pedido.pas=C:\Projetos\dipapel_integra\trunk\src\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>

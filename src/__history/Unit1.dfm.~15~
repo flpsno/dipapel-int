@@ -1,0 +1,100 @@
+object dtmPrincipal: TdtmPrincipal
+  OldCreateOrder = False
+  OnCreate = DataModuleCreate
+  Height = 342
+  Width = 484
+  object conPrincipal: TFDConnection
+    Params.Strings = (
+      'DriverID=MSSQL'
+      'Database=teste'
+      'User_Name=sa'
+      'Password=metal001'
+      'Server=localhost\SQLExpress'
+      'OSAuthent=No'
+      'ApplicationName=teste')
+    Connected = True
+    LoginPrompt = False
+    Left = 32
+    Top = 16
+  end
+  object FDPhysMSSQLDriverLink1: TFDPhysMSSQLDriverLink
+    Left = 144
+    Top = 16
+  end
+  object qryPedidos: TFDQuery
+    Connection = conPrincipal
+    SQL.Strings = (
+      'select * from vwpedidos')
+    Left = 32
+    Top = 96
+    object qryPedidosPEDIDO_ELO7: TStringField
+      FieldName = 'PEDIDO_ELO7'
+      Origin = 'PEDIDO_ELO7'
+      Size = 15
+    end
+    object qryPedidosCOMPRADOR: TStringField
+      FieldName = 'COMPRADOR'
+      Origin = 'COMPRADOR'
+      ReadOnly = True
+      Size = 100
+    end
+    object qryPedidosSTATUS_ELO7: TStringField
+      FieldName = 'STATUS_ELO7'
+      Origin = 'STATUS_ELO7'
+      Size = 50
+    end
+    object qryPedidosDATA_PEDIDO: TDateField
+      FieldName = 'DATA_PEDIDO'
+      Origin = 'DATA_PEDIDO'
+    end
+    object qryPedidosTOTAL_ITENS: TSmallintField
+      FieldName = 'TOTAL_ITENS'
+      Origin = 'TOTAL_ITENS'
+      Required = True
+    end
+    object qryPedidosVALOR_TOTAL: TBCDField
+      FieldName = 'VALOR_TOTAL'
+      Origin = 'VALOR_TOTAL'
+      Required = True
+      Precision = 15
+      Size = 2
+    end
+    object qryPedidosTIPO_FRETE: TStringField
+      FieldName = 'TIPO_FRETE'
+      Origin = 'TIPO_FRETE'
+      Size = 50
+    end
+    object qryPedidosVALOR_FRETE: TBCDField
+      FieldName = 'VALOR_FRETE'
+      Origin = 'VALOR_FRETE'
+      Required = True
+      Precision = 15
+      Size = 2
+    end
+  end
+  object dtsPedidos: TDataSource
+    DataSet = qryPedidos
+    Left = 112
+    Top = 96
+  end
+  object FDGUIxWaitCursor1: TFDGUIxWaitCursor
+    Provider = 'Forms'
+    Left = 264
+    Top = 16
+  end
+  object qryGeral: TFDQuery
+    Connection = conPrincipal
+    Left = 32
+    Top = 152
+  end
+  object qryInsert: TFDQuery
+    Connection = conPrincipal
+    Left = 240
+    Top = 168
+  end
+  object stpGeral: TFDStoredProc
+    Connection = conPrincipal
+    Left = 352
+    Top = 160
+  end
+end

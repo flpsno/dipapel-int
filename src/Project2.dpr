@@ -4,7 +4,8 @@ uses
   Vcl.Forms,
   uFrmPrincipal in 'uFrmPrincipal.pas' {frmPrincipal},
   uDtmPrincipal in 'uDtmPrincipal.pas' {dtmPrincipal: TDataModule},
-  uFrmPedidosHistorico in 'uFrmPedidosHistorico.pas' {frmPedidosHistorico};
+  uFrmPedidosHistorico in 'uFrmPedidosHistorico.pas' {frmPedidosHistorico},
+  Pedido in 'Pedido.pas';
 
 {$R *.res}
 

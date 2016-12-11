@@ -1,0 +1,331 @@
+unit Unit2;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls,
+  Vcl.ExtCtrls, Vcl.StdCtrls, Data.DB, Datasnap.DBClient, Vcl.CheckLst,
+  System.Actions, Vcl.ActnList;
+
+type
+  TfrmPrincipal = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    PageControl1: TPageControl;
+    tsImport: TTabSheet;
+    tsPedidos: TTabSheet;
+    DBGrid1: TDBGrid;
+    Panel3: TPanel;
+    Button1: TButton;
+    odgPrincipal: TOpenDialog;
+    cdsPrincipal: TClientDataSet;
+    dtsPrincipal: TDataSource;
+    cdsPrincipalPEDIDO_ELO7: TStringField;
+    cdsPrincipalCOMPRADOR: TStringField;
+    cdsPrincipalSTATUS_ELO7: TStringField;
+    cdsPrincipalDATA_PEDIDO: TDateField;
+    cdsPrincipalTOTAL_ITENS: TSmallintField;
+    cdsPrincipalVALOR_TOTAL: TFloatField;
+    cdsPrincipalTIPO_FRETE: TStringField;
+    cdsPrincipalVALOR_FRETE: TFloatField;
+    tsConfig: TTabSheet;
+    pnlRodape: TPanel;
+    dbgPrincipal: TDBGrid;
+    pnlResultado: TPanel;
+    pnl1: TPanel;
+    clbPrincipal: TCheckListBox;
+    pb1: TProgressBar;
+    edtCaminhoArquivo: TEdit;
+    btnArquivo: TButton;
+    btnCarrega: TButton;
+    btnReset: TButton;
+    btnProcessa: TButton;
+    actPrincipal: TActionList;
+    actCarregaArquivo: TAction;
+    btn1: TButton;
+    procedure Button1Click(Sender: TObject);
+    procedure btnArquivoClick(Sender: TObject);
+    procedure btnProcessaClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnResetClick(Sender: TObject);
+    procedure DBGrid1DblClick(Sender: TObject);
+    procedure actCarregaArquivoExecute(Sender: TObject);
+    procedure btn1Click(Sender: TObject);
+  private
+    { Private declarations }
+    function fcPedidoNovo(const pCodigo: string): Boolean;
+    function fcAtualizaPedido(const pCodigo, pStatusElo7, pTipoFrete, pComprador: string; const pValorTotal, pValorFrete: Double; const pTotalItens: Integer): Boolean;
+  public
+    { Public declarations }
+  end;
+
+var
+  frmPrincipal: TfrmPrincipal;
+
+implementation
+
+{$R *.dfm}
+
+uses Unit1, Unit3;
+
+procedure TfrmPrincipal.Button1Click(Sender: TObject);
+begin
+  if not dtmPrincipal.qryPedidos.Active then
+    dtmPrincipal.qryPedidos.Open()
+  else
+    dtmPrincipal.qryPedidos.Refresh;
+end;
+
+procedure TfrmPrincipal.DBGrid1DblClick(Sender: TObject);
+var
+  frmPedidosHis: TfrmPedidosHistorico;
+begin
+  frmPedidosHis := TfrmPedidosHistorico.Create(nil);
+  try
+    dtmPrincipal.qryPedidosHis.Close;
+    dtmPrincipal.qryPedidosHis.Filtered := False;
+    dtmPrincipal.qryPedidosHis.Filter := 'PEDIDO_ELO7 = '''
+      + dtmPrincipal.qryPedidosPEDIDO_ELO7.AsString + '''';
+    dtmPrincipal.qryPedidosHis.Filtered := True;
+    dtmPrincipal.qryPedidosHis.Open();
+
+    frmPedidosHis.ShowModal;
+
+  finally
+    FreeAndNil(frmPedidosHis);
+  end;
+
+end;
+
+procedure TfrmPrincipal.actCarregaArquivoExecute(Sender: TObject);
+var
+  i, j, iTotalItens: Integer;
+  sArquivo, sCampo, sLinha, sPedidoElo7, sComprador, sStatusElo7, sTipoFrete: string;
+  slLinha,  slCSV: TStringList;
+  dDataPedido: TDate;
+  dValorTotal, dValorFrete: Double;
+begin
+  if FileExists(edtCaminhoArquivo.Text) then
+  begin
+    sArquivo := ExtractFileName(edtCaminhoArquivo.Text);
+
+    slLinha := TStringList.Create;
+    slCSV := TStringList.Create;
+    try
+      slCSV.LoadFromFile(edtCaminhoArquivo.Text);
+
+      for i := 1 to  slCSV.Count -1 do
+      begin
+        sLinha := slCSV[i] + ';';
+        slLinha.Clear;
+
+        for j := 1 to Length(sLinha) do
+        begin
+          if sLinha[j] = ';' then
+          begin
+            slLinha.Add(sCampo);
+            sCampo := '';
+            Continue;
+          end;
+          sCampo := sCampo + sLinha[j]
+        end;
+
+        sPedidoElo7 := slLinha[0];
+        sComprador := slLinha[1];
+        sStatusElo7 := slLinha[2];
+        dDataPedido := StrToDate(slLinha[3]);
+        iTotalItens := StrToInt(slLinha[4]);
+        dValorTotal := StrToFloat(StringReplace(slLinha[5], '.', ',', [rfReplaceAll]));
+        sTipoFrete := slLinha [6];
+
+        if (slLinha[7] <> '') then
+          dValorFrete := StrToFloat(StringReplace(slLinha[7], '.', ',', [rfReplaceAll]))
+        else
+          dValorFrete := 0;
+
+        cdsPrincipal.Append;
+        cdsPrincipalPEDIDO_ELO7.AsString := sPedidoElo7;
+        cdsPrincipalCOMPRADOR.AsString := sComprador;
+        cdsPrincipalSTATUS_ELO7.AsString := sStatusElo7;
+        cdsPrincipalDATA_PEDIDO.Value := dDataPedido;
+        cdsPrincipalTOTAL_ITENS.Value := iTotalItens;
+        cdsPrincipalVALOR_TOTAL.Value := dValorTotal;
+        cdsPrincipalTIPO_FRETE.AsString := sTipoFrete;
+        cdsPrincipalVALOR_FRETE.Value := dValorFrete;
+        cdsPrincipal.Post;
+      end;
+      cdsPrincipal.First;
+    finally
+      slCSV.Free;
+    end;
+  end;
+
+end;
+
+procedure TfrmPrincipal.btn1Click(Sender: TObject);
+begin
+  if not RenameFile(edtCaminhoArquivo.Text,
+    Copy(edtCaminhoArquivo.Text, 1, length(edtCaminhoArquivo.Text) -4 )
+    + '_' + FormatDateTime('yyyymmddhhnnss', Now) + '.csv') then
+    ShowMessage('falhou');
+
+//  if not MoveFile(get_) then
+
+
+end;
+
+procedure TfrmPrincipal.btnArquivoClick(Sender: TObject);
+var
+  SR: TSearchRec;
+begin
+  if odgPrincipal.Execute then
+  begin
+    edtCaminhoArquivo.Text := odgPrincipal.FileName;
+
+    if FindFirst(ExtractFileDir(odgPrincipal.FileName) + '\*.csv', faAnyFile, SR) = 0 then
+    begin
+      repeat
+        if (SR.Attr <> faDirectory) then
+        begin
+          clbPrincipal.AddItem(SR.Name, Self);
+        end;
+      until FindNext(SR) <> 0;
+      FindClose(SR);
+    end;
+  end;
+end;
+
+procedure TfrmPrincipal.btnProcessaClick(Sender: TObject);
+var
+  iRegistrosNovos, iRegistrosAtualizados: Integer;
+  sArquivo: string;
+begin
+  if not cdsPrincipal.IsEmpty then
+  begin
+    iRegistrosNovos := 0;
+    iRegistrosAtualizados := 0;
+
+    sArquivo := ExtractFileName(edtCaminhoArquivo.Text);
+
+    if not dtmPrincipal.qryPedidos.Active then
+      dtmPrincipal.qryPedidos.Open();
+
+    pb1.Max := cdsPrincipal.RecordCount;
+    pb1.Step := Round(cdsPrincipal.RecordCount / 100);
+
+    cdsPrincipal.First;
+    while not cdsPrincipal.Eof do
+    begin
+
+      // consulta se codigo elo7 existe, se não existe, insere
+      if fcPedidoNovo(cdsPrincipalPEDIDO_ELO7.AsString) then
+      begin
+        dtmPrincipal.sbInserePedido(cdsPrincipalPEDIDO_ELO7.AsString,
+          cdsPrincipalSTATUS_ELO7.AsString, cdsPrincipalDATA_PEDIDO.Value,
+          cdsPrincipalTOTAL_ITENS.Value, cdsPrincipalVALOR_TOTAL.Value,
+          cdsPrincipalTIPO_FRETE.AsString, cdsPrincipalVALOR_FRETE.Value,
+          cdsPrincipalCOMPRADOR.AsString);
+
+        Inc(iRegistrosNovos);
+      end
+
+      // consulta se codigo elo7 existe e se campos mudaram de valor
+      else if fcAtualizaPedido(cdsPrincipalPEDIDO_ELO7.AsString,
+        cdsPrincipalSTATUS_ELO7.AsString, cdsPrincipalTIPO_FRETE.AsString,
+        cdsPrincipalCOMPRADOR.AsString,
+        cdsPrincipalVALOR_TOTAL.Value, cdsPrincipalVALOR_FRETE.Value,
+        cdsPrincipalTOTAL_ITENS.AsInteger) then
+      begin
+        if dtmPrincipal.qryPedidos.Locate('PEDIDO_ELO7', cdsPrincipalPEDIDO_ELO7.AsString, []) then
+        begin
+          dtmPrincipal.sbAtualizaPedido(cdsPrincipalPEDIDO_ELO7.AsString,
+            cdsPrincipalSTATUS_ELO7.AsString, cdsPrincipalDATA_PEDIDO.Value,
+            cdsPrincipalTOTAL_ITENS.Value, cdsPrincipalVALOR_TOTAL.Value,
+            cdsPrincipalTIPO_FRETE.AsString, cdsPrincipalVALOR_FRETE.Value,
+            cdsPrincipalCOMPRADOR.AsString);
+
+          Inc(iRegistrosAtualizados);
+        end;
+      end;
+
+      pb1.Position := cdsPrincipal.RecNo +1;
+      cdsPrincipal.Next;
+    end;
+
+    cdsPrincipal.First;
+
+    dtmPrincipal.qryResultadoImport.Close;
+    dtmPrincipal.qryResultadoImport.ParamByName('pData').AsDate := Now;
+    dtmPrincipal.qryResultadoImport.Open();
+
+    // registra log com o nome do arquivo e teve registros novos ou atualizados
+    dtmPrincipal.sbInsereLog(sArquivo, iRegistrosNovos, iRegistrosAtualizados);
+
+    ShowMessage('Concluído!!!' + #13
+      + 'Registros Inseridos: ' + IntToStr(iRegistrosNovos) + #13
+      + 'Registros Atualizados: ' + IntToStr(iRegistrosAtualizados));
+  end;
+end;
+
+procedure TfrmPrincipal.btnResetClick(Sender: TObject);
+begin
+  edtCaminhoArquivo.Text := '';
+  cdsPrincipal.EmptyDataSet;
+  pb1.Position := 0;
+
+end;
+
+function TfrmPrincipal.fcAtualizaPedido(const pCodigo, pStatusElo7,
+  pTipoFrete, pComprador: string; const pValorTotal, pValorFrete: Double;
+  const pTotalItens: Integer): Boolean;
+begin
+  with dtmPrincipal do
+  begin
+    qryGeral.Close;
+    qryGeral.SQL.Clear;
+    qryGeral.SQL.Text :=
+      'SELECT PEDIDO_ELO7, STATUS_ELO7, TIPO_FRETE, VALOR_TOTAL, VALOR_FRETE, '
+      + 'TOTAL_ITENS, COMPRADOR '
+      + 'FROM tblpedidos WHERE PEDIDO_ELO7 = :pCodigo';
+    qryGeral.ParamByName('pCodigo').AsString := pCodigo;
+    qryGeral.Open();
+
+    if (qryGeral.FieldByName('STATUS_ELO7').AsString <> pStatusElo7)
+      or (qryGeral.FieldByName('TIPO_FRETE').AsString <> pTipoFrete)
+      or (qryGeral.FieldByName('VALOR_TOTAL').AsFloat <> pValorTotal)
+      or (qryGeral.FieldByName('VALOR_FRETE').AsFloat <> pValorFrete)
+      or (qryGeral.FieldByName('TOTAL_ITENS').AsInteger <> pTotalItens)
+      or (qryGeral.FieldByName('COMPRADOR').AsString <> pComprador) then
+      Result := True
+    else
+      Result := False;
+
+    qryGeral.Close;
+  end;
+end;
+
+function TfrmPrincipal.fcPedidoNovo(const pCodigo: string): Boolean;
+begin
+  with dtmPrincipal do
+  begin
+    qryGeral.Close;
+    qryGeral.SQL.Clear;
+    qryGeral.SQL.Text :=
+      'SELECT IDPEDIDO FROM tblpedidos WHERE PEDIDO_ELO7 = :pCodigo';
+    qryGeral.ParamByName('pCodigo').AsString := pCodigo;
+    qryGeral.Open();
+
+    Result := qryGeral.IsEmpty;
+
+    qryGeral.Close;
+  end;
+end;
+
+procedure TfrmPrincipal.FormCreate(Sender: TObject);
+begin
+  cdsPrincipal.CreateDataSet;
+  cdsPrincipal.Open;
+end;
+
+end.

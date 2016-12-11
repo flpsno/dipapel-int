@@ -99,23 +99,46 @@ type
     cdsSelect: TClientDataSet;
     qrySelect: TFDQuery;
     dspSelect: TDataSetProvider;
+    cdsConfig: TClientDataSet;
+    qryConfig: TFDQuery;
+    dspConfig: TDataSetProvider;
+    qryConfigIDCONFIG: TFDAutoIncField;
+    qryConfigPASTA_ORIGEM: TStringField;
+    qryConfigPASTA_DESTINO: TStringField;
+    cdsConfigIDCONFIG: TAutoIncField;
+    cdsConfigPASTA_ORIGEM: TStringField;
+    cdsConfigPASTA_DESTINO: TStringField;
+    dtsConfig: TDataSource;
+    cdsPedidosPos: TClientDataSet;
+    qryPedidosPos: TFDQuery;
+    dspPedidosPos: TDataSetProvider;
+    qryPedidosPosIDPEDIDOSPOS: TFDAutoIncField;
+    cdsPedidosPosIDPEDIDOSPOS: TAutoIncField;
+    qryPedidosPosIDPEDIDO: TIntegerField;
+    qryPedidosPosPOSICAO: TSmallintField;
+    cdsPedidosPosIDPEDIDO: TIntegerField;
+    cdsPedidosPosPOSICAO: TSmallintField;
+    stpInsereAtualizaPedidos: TFDStoredProc;
     procedure DataModuleCreate(Sender: TObject);
     procedure cdsPedidosAfterPost(DataSet: TDataSet);
     procedure cdsPedidosHisAfterPost(DataSet: TDataSet);
     procedure cdsLogsAfterPost(DataSet: TDataSet);
+    procedure cdsConfigAfterPost(DataSet: TDataSet);
+    procedure DataModuleDestroy(Sender: TObject);
+    procedure cdsPedidosPosAfterPost(DataSet: TDataSet);
+    procedure cdsSelectAfterPost(DataSet: TDataSet);
   private
+    FServer: string;
+    FPathOrigem: string;
     { Private declarations }
-    procedure sbInserePedidoHis(pIdPedido: Integer; pValor_antigo, pValor_novo, pTipo_alteracao, pCampo: string);
+    procedure SetServer(const Value: string);
+    procedure SetPathOrigem(const Value: string);
   public
     { Public declarations }
     procedure sbInsereLog(const pNomeArquivo: string; const pNumInseridos, pNumAtualizados: Integer);
-    procedure sbInserePedido(pPEDIDO_ELO7, pSTATUS_ELO7: string;
-      pDATA_PEDIDO: TDate; pTOTAL_ITENS: Integer; pVALOR_TOTAL: Double;
-      pTIPO_FRETE: string; pVALOR_FRETE: Double; pCOMPRADOR: string);
-    function fcAtualizaPedido(pPEDIDO_ELO7, pSTATUS_ELO7: string;
-      pDATA_PEDIDO: TDate; pTOTAL_ITENS: Integer; pVALOR_TOTAL: Double;
-      pTIPO_FRETE: string; pVALOR_FRETE: Double; pCOMPRADOR: string): Boolean;
-    function fcPedidoExiste(pPedidosElo7: string): Boolean;
+    function fcRetornaIDPedido(pPedidoElo7: string): Integer;
+    property Server: string read FServer write SetServer;
+    property PathOrigem: string read FPathOrigem write SetPathOrigem;
   end;
 
 var
@@ -126,6 +149,11 @@ implementation
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
+
+procedure TdtmPrincipal.cdsConfigAfterPost(DataSet: TDataSet);
+begin
+  cdsConfig.ApplyUpdates(-1);
+end;
 
 procedure TdtmPrincipal.cdsLogsAfterPost(DataSet: TDataSet);
 begin
@@ -148,6 +176,16 @@ begin
   cdsPedidosHis.ApplyUpdates(-1);
 end;
 
+procedure TdtmPrincipal.cdsPedidosPosAfterPost(DataSet: TDataSet);
+begin
+  cdsPedidosPos.ApplyUpdates(-1);
+end;
+
+procedure TdtmPrincipal.cdsSelectAfterPost(DataSet: TDataSet);
+begin
+  cdsSelect.ApplyUpdates(-1);
+end;
+
 procedure TdtmPrincipal.DataModuleCreate(Sender: TObject);
 var
   IniFile: TIniFile;
@@ -164,109 +202,44 @@ begin
     conPrincipal.Params.Add('User_Name=' + IniFile.ReadString('principal', 'user', ''));
     conPrincipal.Params.Add('Password=' + IniFile.ReadString('principal', 'password', ''));
     conPrincipal.Params.Add('Server=' + IniFile.ReadString('principal', 'server', ''));
-//    conPrincipal.Params.Add('OSAuthent=No');
-  //  conPrincipal.Params.Add('Workstation=' + gtrGetComputerNameFromWindows);
     conPrincipal.Params.Add('ApplicationName=Import');
+
+    Server := IniFile.ReadString('principal', 'server', '');
+    PathOrigem := IniFile.ReadString('principal', 'path_origem', 'D:\');
   finally
     IniFile.Free;
   end;
+
+  FDPhysMySQLDriverLink1.VendorLib := GetCurrentDir +  '.\..\lib\libmysql.dll';
+  cdsConfig.Open;
 end;
 
-function TdtmPrincipal.fcAtualizaPedido(pPEDIDO_ELO7, pSTATUS_ELO7: string;
-  pDATA_PEDIDO: TDate; pTOTAL_ITENS: Integer; pVALOR_TOTAL: Double;
-  pTIPO_FRETE: string; pVALOR_FRETE: Double; pCOMPRADOR: string): Boolean;
-var
-  bAlterou: Boolean;
+procedure TdtmPrincipal.DataModuleDestroy(Sender: TObject);
 begin
-  bAlterou := False;
-
-  if not cdsPedidos.Active then
-    cdsPedidos.Open;
-
-  if cdsPedidos.Locate('PEDIDO_ELO7', pPEDIDO_ELO7, [loCaseInsensitive]) then
-  begin
-    if cdsPedidosSTATUS_ELO7.AsString <> pSTATUS_ELO7 then
-    begin
-      bAlterou := True;
-      sbInserePedidoHis(cdsPedidosIDPEDIDO.Value, cdsPedidosSTATUS_ELO7.AsString,
-        pSTATUS_ELO7, 'U', 'STATUS_ELO7');
-    end;
-
-    if cdsPedidosDATA_PEDIDO.AsDateTime <> pDATA_PEDIDO then
-    begin
-      bAlterou := True;
-      sbInserePedidoHis(cdsPedidosIDPEDIDO.Value, cdsPedidosDATA_PEDIDO.AsString,
-        DateToStr(pDATA_PEDIDO), 'U', 'DATA_PEDIDO');
-    end;
-
-    if cdsPedidosTOTAL_ITENS.AsInteger <> pTOTAL_ITENS then
-    begin
-      bAlterou := True;
-      sbInserePedidoHis(cdsPedidosIDPEDIDO.Value, cdsPedidosTOTAL_ITENS.AsString,
-        IntToStr(pTOTAL_ITENS), 'U', 'TOTAL_ITENS');
-    end;
-
-    if cdsPedidosVALOR_TOTAL.AsFloat <> pVALOR_TOTAL then
-    begin
-      bAlterou := True;
-      sbInserePedidoHis(cdsPedidosIDPEDIDO.Value, cdsPedidosVALOR_TOTAL.AsString,
-        CurrToStr(pVALOR_TOTAL), 'U', 'VALOR_TOTAL');
-    end;
-
-    if cdsPedidosTIPO_FRETE.AsString <> pTIPO_FRETE then
-    begin
-      bAlterou := True;
-      sbInserePedidoHis(cdsPedidosIDPEDIDO.Value, cdsPedidosTIPO_FRETE.AsString,
-        pTIPO_FRETE, 'U', 'TIPO_FRETE');
-    end;
-
-    if cdsPedidosVALOR_FRETE.AsFloat <> pVALOR_FRETE then
-    begin
-      bAlterou := True;
-      sbInserePedidoHis(cdsPedidosIDPEDIDO.Value, cdsPedidosVALOR_FRETE.AsString,
-        CurrToStr(pVALOR_FRETE), 'U', 'VALOR_FRETE');
-    end;
-
-    if cdsPedidosCOMPRADOR.AsString <> pCOMPRADOR then
-    begin
-      bAlterou := True;
-      sbInserePedidoHis(cdsPedidosIDPEDIDO.Value, cdsPedidosCOMPRADOR.AsString,
-        pCOMPRADOR, 'U', 'COMPRADOR');
-    end;
-  end;
-
-  if bAlterou then
-  begin
-    cdsPedidos.Edit;
-    cdsPedidosSTATUS_ELO7.AsString := pSTATUS_ELO7;
-    cdsPedidosDATA_PEDIDO.Value := pDATA_PEDIDO;
-    cdsPedidosTOTAL_ITENS.Value := pTOTAL_ITENS;
-    cdsPedidosVALOR_TOTAL.Value := pVALOR_TOTAL;
-    cdsPedidosTIPO_FRETE.AsString := pTIPO_FRETE;
-    cdsPedidosVALOR_FRETE.Value := pVALOR_FRETE;
-    cdsPedidosCOMPRADOR.AsString := pCOMPRADOR;
-    cdsPedidos.Post;
-  end;
-
-  Result := bAlterou;
+  cdsConfig.Close;
 end;
 
-function TdtmPrincipal.fcPedidoExiste(pPedidosElo7: string): Boolean;
+function TdtmPrincipal.fcRetornaIDPedido(pPedidoElo7: string): Integer;
 begin
   cdsSelect.Close;
   qrySelect.SQL.Clear;
   qrySelect.SQL.Text := 'SELECT idpedido FROM tblpedidos WHERE PEDIDO_ELO7 = :pPedidoElo7';
-  qrySelect.ParamByName('pPedidoElo7').AsString := pPedidosElo7;
+  qrySelect.ParamByName('pPedidoElo7').AsString := pPedidoElo7;
   cdsSelect.Open;
 
-  Result := not cdsSelect.IsEmpty;
+  if not cdsSelect.IsEmpty then
+    Result := cdsSelect.FieldByName('IDPEDIDO').AsInteger
+  else
+    Result := 0;
 end;
 
 procedure TdtmPrincipal.sbInsereLog(const pNomeArquivo: string;
   const pNumInseridos, pNumAtualizados: Integer);
 begin
   if not cdsLogs.Active then
-    cdsLogs.Open;
+    cdsLogs.Open
+  else
+    cdsLogs.Refresh;
 
   cdsLogs.Append;
   cdsLogsDATA_LOG.Value := Now;
@@ -276,39 +249,14 @@ begin
   cdsLogs.Post;
 end;
 
-procedure TdtmPrincipal.sbInserePedido(pPEDIDO_ELO7, pSTATUS_ELO7: string;
-  pDATA_PEDIDO: TDate; pTOTAL_ITENS: Integer; pVALOR_TOTAL: Double;
-  pTIPO_FRETE: string; pVALOR_FRETE: Double; pCOMPRADOR: string);
+procedure TdtmPrincipal.SetPathOrigem(const Value: string);
 begin
-  if not cdsPedidos.Active then
-    cdsPedidos.Open();
-
-   cdsPedidos.Append;
-   cdsPedidosPEDIDO_ELO7.AsString := pPEDIDO_ELO7;
-   cdsPedidosSTATUS_ELO7.AsString := pSTATUS_ELO7;
-   cdsPedidosDATA_PEDIDO.Value := pDATA_PEDIDO;
-   cdsPedidosTOTAL_ITENS.Value := pTOTAL_ITENS;
-   cdsPedidosVALOR_TOTAL.Value := pVALOR_TOTAL;
-   cdsPedidosTIPO_FRETE.AsString := pTIPO_FRETE;
-   cdsPedidosVALOR_FRETE.Value := pVALOR_FRETE;
-   cdsPedidosCOMPRADOR.AsString := pCOMPRADOR;
-   cdsPedidos.Post;
+  FPathOrigem := Value;
 end;
 
-procedure TdtmPrincipal.sbInserePedidoHis(pIdPedido: Integer; pValor_antigo,
-  pValor_novo, pTipo_alteracao, pCampo: string);
+procedure TdtmPrincipal.SetServer(const Value: string);
 begin
-  if not cdsPedidosHis.Active then
-    cdsPedidosHis.Open;
-
-  cdsPedidosHis.Append;
-  cdsPedidosHisIDPEDIDO.Value := pIdPedido;
-  cdsPedidosHisVALOR_ANTIGO.AsString := pValor_antigo;
-  cdsPedidosHisVALOR_NOVO.AsString := pValor_novo;
-  cdsPedidosHisDATA_HISTORICO.Value := Now;
-  cdsPedidosHisTIPO_ALTERACAO.AsString := pTipo_alteracao;
-  cdsPedidosHisCAMPO.AsString := pCampo;
-  cdsPedidosHis.Post;
+  FServer := Value;
 end;
 
 end.
