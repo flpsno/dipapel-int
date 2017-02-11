@@ -2,7 +2,7 @@ unit Pedido;
 
 interface
 
-uses System.Variants;
+uses System.Variants, System.Classes, FireDAC.Stan.Param;
 
 type
   TPedido = class

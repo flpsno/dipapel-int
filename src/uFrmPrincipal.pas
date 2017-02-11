@@ -279,7 +279,7 @@ begin
     if ((iRegistrosNovos + iRegistrosAtualizados) > 0) then
       dtmPrincipal.sbInsereLog(sArquivoFinal, iRegistrosNovos, iRegistrosAtualizados);
 
-    if DirectoryExists(dtmPrincipal.cdsConfigPASTA_DESTINO.AsString) then
+    if System.SysUtils.DirectoryExists(dtmPrincipal.cdsConfigPASTA_DESTINO.AsString) then
       MoveFile(PChar(edtCaminhoArquivo.Text), PChar(dtmPrincipal.cdsConfigPASTA_DESTINO.AsString + '\' + sArquivoFinal));
 
     ShowMessage('Concluído!!!' + #13
@@ -296,24 +296,12 @@ end;
 
 procedure TfrmPrincipal.btnArquivoClick(Sender: TObject);
 begin
-  if DirectoryExists(dtmPrincipal.PathOrigem) then
+  if System.SysUtils.DirectoryExists(dtmPrincipal.PathOrigem) then
     odgPrincipal.InitialDir := dtmPrincipal.PathOrigem;
 
   if odgPrincipal.Execute then
   begin
     edtCaminhoArquivo.Text := odgPrincipal.FileName;
-
-//    if FindFirst(ExtractFileDir(odgPrincipal.FileName) + '\*.csv', faAnyFile, SR) = 0 then
-//    begin
-//      repeat
-//        if (SR.Attr <> faDirectory) then
-//        begin
-//          clbPrincipal.AddItem(SR.Name, Self);
-//        end;
-//      until FindNext(SR) <> 0;
-//      FindClose(SR);
-//    end;
-
     actCarregaArquivo.Execute;
   end;
 end;

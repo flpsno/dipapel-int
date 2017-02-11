@@ -202,6 +202,10 @@ object frmPrincipal: TfrmPrincipal
       object tsPedidos: TTabSheet
         Caption = 'Pedidos'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object DBGrid1: TDBGrid
           Left = 0
           Top = 41
@@ -286,6 +290,10 @@ object frmPrincipal: TfrmPrincipal
       object tsConfig: TTabSheet
         Caption = 'Configura'#231#227'o'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lbl1: TLabel
           Left = 3
           Top = 56
