@@ -272,10 +272,12 @@ begin
 
     sArquivoFinal := Copy(sArquivo, 1,Length(sArquivo) -4)
       + '_' + FormatDateTime('yyyymmdd', Now)
+      + '_' + IntToStr(iRegistrosNovos + iRegistrosAtualizados) + '_alteracoes'
       + ExtractFileExt(sArquivo);
 
     // registra log com o nome do arquivo e teve registros novos ou atualizados
-    dtmPrincipal.sbInsereLog(sArquivoFinal, iRegistrosNovos, iRegistrosAtualizados);
+    if ((iRegistrosNovos + iRegistrosAtualizados) > 0) then
+      dtmPrincipal.sbInsereLog(sArquivoFinal, iRegistrosNovos, iRegistrosAtualizados);
 
     if DirectoryExists(dtmPrincipal.cdsConfigPASTA_DESTINO.AsString) then
       MoveFile(PChar(edtCaminhoArquivo.Text), PChar(dtmPrincipal.cdsConfigPASTA_DESTINO.AsString + '\' + sArquivoFinal));
