@@ -58,10 +58,14 @@ type
     dbg1: TDBGrid;
     act1: TAction;
     actProcessaArquivo: TAction;
+    dtpDtImportacaoDe: TDateTimePicker;
+    lbl3: TLabel;
+    dtpDtImportacaoAte: TDateTimePicker;
+    lbl4: TLabel;
+    lbl5: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure btnArquivoClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure DBGrid1DblClick(Sender: TObject);
     procedure actCarregaArquivoExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actCarregaDiretorioDestExecute(Sender: TObject);
@@ -87,31 +91,12 @@ uses uDtmPrincipal, uFrmPedidosHistorico;
 
 procedure TfrmPrincipal.Button1Click(Sender: TObject);
 begin
-  if not dtmPrincipal.qryVwPedidos.Active then
-    dtmPrincipal.qryVwPedidos.Open()
-  else
-    dtmPrincipal.qryVwPedidos.Refresh;
-end;
-
-procedure TfrmPrincipal.DBGrid1DblClick(Sender: TObject);
-var
-  frmPedidosHis: TfrmPedidosHistorico;
-begin
-  frmPedidosHis := TfrmPedidosHistorico.Create(nil);
-  try
-    dtmPrincipal.qryPedidosHis.Close;
-    dtmPrincipal.qryPedidosHis.Filtered := False;
-    dtmPrincipal.qryPedidosHis.Filter := 'PEDIDO_ELO7 = '''
-      + dtmPrincipal.qryPedidosPEDIDO_ELO7.AsString + '''';
-    dtmPrincipal.qryPedidosHis.Filtered := True;
-    dtmPrincipal.qryPedidosHis.Open();
-
-    frmPedidosHis.ShowModal;
-
-  finally
-    FreeAndNil(frmPedidosHis);
-  end;
-
+  dtmPrincipal.qryPedidos.Close;
+  dtmPrincipal.qryPedidos.SQL.Text :=
+    'SELECT * FROM tblpedidos WHERE DATA_IMPORTACAO BETWEEN :DATA_IMPORTACAO_DE AND :DATA_IMPORTACAO_ATE ORDER BY DATA_PEDIDO DESC';
+  dtmPrincipal.qryPedidos.ParamByName('DATA_IMPORTACAO_DE').AsDate := dtpDtImportacaoDe.Date;
+  dtmPrincipal.qryPedidos.ParamByName('DATA_IMPORTACAO_ATE').AsDate := dtpDtImportacaoAte.Date;
+  dtmPrincipal.qryPedidos.Open();
 end;
 
 procedure TfrmPrincipal.act1Execute(Sender: TObject);
@@ -232,9 +217,6 @@ begin
 
     sArquivo := ExtractFileName(edtCaminhoArquivo.Text);
 
-    if not dtmPrincipal.qryPedidos.Active then
-      dtmPrincipal.qryPedidos.Open();
-
     pb1.Max := cdsPrincipal.RecordCount;
     pb1.Step := Round(cdsPrincipal.RecordCount / 100);
 
@@ -317,6 +299,10 @@ begin
   PageControl1.ActivePageIndex := 0;
   stbPrincipal.Panels[0].Text := 'Server DB: ' + dtmPrincipal.Server;
   stbPrincipal.Panels[1].Text := 'versão: ' + dtmPrincipal.Server;
+  //
+  dtpDtImportacaoDe.Date := Now;
+  dtpDtImportacaoAte.Date := Now;
+
 end;
 
 end.

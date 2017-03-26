@@ -16,71 +16,6 @@ object dtmPrincipal: TdtmPrincipal
     Left = 32
     Top = 16
   end
-  object qryVwPedidos: TFDQuery
-    Connection = conPrincipal
-    SQL.Strings = (
-      'select * from vwpedidos')
-    Left = 32
-    Top = 96
-    object qryVwPedidosPEDIDO_ELO7: TStringField
-      DisplayLabel = 'Pedido ELO7'
-      FieldName = 'PEDIDO_ELO7'
-      Origin = 'PEDIDO_ELO7'
-      Size = 15
-    end
-    object qryVwPedidosCOMPRADOR: TStringField
-      DisplayLabel = 'Comprador'
-      FieldName = 'COMPRADOR'
-      Origin = 'COMPRADOR'
-      ReadOnly = True
-      Size = 100
-    end
-    object qryVwPedidosSTATUS_ELO7: TStringField
-      DisplayLabel = 'Status ELO7'
-      FieldName = 'STATUS_ELO7'
-      Origin = 'STATUS_ELO7'
-      Size = 50
-    end
-    object qryVwPedidosDATA_PEDIDO: TDateField
-      DisplayLabel = 'Dt. Pedido'
-      FieldName = 'DATA_PEDIDO'
-      Origin = 'DATA_PEDIDO'
-    end
-    object qryVwPedidosTOTAL_ITENS: TSmallintField
-      DisplayLabel = 'Total Itens'
-      FieldName = 'TOTAL_ITENS'
-      Origin = 'TOTAL_ITENS'
-      Required = True
-    end
-    object qryVwPedidosVALOR_TOTAL: TBCDField
-      DisplayLabel = 'Vl. Total'
-      FieldName = 'VALOR_TOTAL'
-      Origin = 'VALOR_TOTAL'
-      Required = True
-      Precision = 15
-      Size = 2
-    end
-    object qryVwPedidosTIPO_FRETE: TStringField
-      DisplayLabel = 'Tipo Frete'
-      FieldName = 'TIPO_FRETE'
-      Origin = 'TIPO_FRETE'
-      Size = 50
-    end
-    object qryVwPedidosVALOR_FRETE: TBCDField
-      DisplayLabel = 'Vl. Frete'
-      FieldName = 'VALOR_FRETE'
-      Origin = 'VALOR_FRETE'
-      Required = True
-      Precision = 15
-      Size = 2
-    end
-  end
-  object dtsVwPedidos: TDataSource
-    AutoEdit = False
-    DataSet = qryVwPedidos
-    Left = 128
-    Top = 96
-  end
   object FDGUIxWaitCursor1: TFDGUIxWaitCursor
     Provider = 'Forms'
     Left = 256
@@ -211,58 +146,11 @@ object dtmPrincipal: TdtmPrincipal
     Left = 136
     Top = 16
   end
-  object cdsPedidos: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'dspPedidos'
-    AfterPost = cdsPedidosAfterPost
-    Left = 48
-    Top = 312
-    object cdsPedidosIDPEDIDO: TAutoIncField
-      FieldName = 'IDPEDIDO'
-      ReadOnly = True
-    end
-    object cdsPedidosPEDIDO_ELO7: TStringField
-      FieldName = 'PEDIDO_ELO7'
-      Size = 15
-    end
-    object cdsPedidosSTATUS_ELO7: TStringField
-      FieldName = 'STATUS_ELO7'
-      Size = 50
-    end
-    object cdsPedidosDATA_PEDIDO: TDateField
-      FieldName = 'DATA_PEDIDO'
-    end
-    object cdsPedidosTOTAL_ITENS: TSmallintField
-      FieldName = 'TOTAL_ITENS'
-      Required = True
-    end
-    object cdsPedidosVALOR_TOTAL: TBCDField
-      FieldName = 'VALOR_TOTAL'
-      Required = True
-      Precision = 15
-      Size = 2
-    end
-    object cdsPedidosTIPO_FRETE: TStringField
-      FieldName = 'TIPO_FRETE'
-      Size = 50
-    end
-    object cdsPedidosVALOR_FRETE: TBCDField
-      FieldName = 'VALOR_FRETE'
-      Required = True
-      Precision = 15
-      Size = 2
-    end
-    object cdsPedidosCOMPRADOR: TStringField
-      FieldName = 'COMPRADOR'
-      Size = 100
-    end
-  end
   object qryPedidos: TFDQuery
     Connection = conPrincipal
     SQL.Strings = (
       'select * from tblpedidos')
-    Left = 152
+    Left = 48
     Top = 312
     object qryPedidosIDPEDIDO: TFDAutoIncField
       FieldName = 'IDPEDIDO'
@@ -318,11 +206,27 @@ object dtmPrincipal: TdtmPrincipal
       Origin = 'COMPRADOR'
       Size = 100
     end
-  end
-  object dspPedidos: TDataSetProvider
-    DataSet = qryPedidos
-    Left = 256
-    Top = 312
+    object qryPedidosITENS: TStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'ITENS'
+      Origin = 'ITENS'
+      Size = 250
+    end
+    object qryPedidosIDPEDIDOSCFG: TIntegerField
+      AutoGenerateValue = arDefault
+      FieldName = 'IDPEDIDOSCFG'
+      Origin = 'IDPEDIDOSCFG'
+    end
+    object qryPedidosIDSTATUSPEDIDO: TIntegerField
+      FieldName = 'IDSTATUSPEDIDO'
+      Origin = 'IDSTATUSPEDIDO'
+      Required = True
+    end
+    object qryPedidosDATA_IMPORTACAO: TDateField
+      FieldName = 'DATA_IMPORTACAO'
+      Origin = 'DATA_IMPORTACAO'
+      Required = True
+    end
   end
   object cdsPedidosHis: TClientDataSet
     Aggregates = <>
@@ -675,5 +579,11 @@ object dtmPrincipal: TdtmPrincipal
         ParamType = ptOutput
         Size = 100
       end>
+  end
+  object dtsPedidos: TDataSource
+    AutoEdit = False
+    DataSet = qryPedidos
+    Left = 152
+    Top = 312
   end
 end

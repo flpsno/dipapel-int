@@ -2,7 +2,7 @@ object frmPrincipal: TfrmPrincipal
   Left = 0
   Top = 0
   Caption = 'Principal'
-  ClientHeight = 664
+  ClientHeight = 589
   ClientWidth = 738
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -38,7 +38,7 @@ object frmPrincipal: TfrmPrincipal
     Left = 0
     Top = 57
     Width = 738
-    Height = 588
+    Height = 513
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel2'
@@ -49,20 +49,25 @@ object frmPrincipal: TfrmPrincipal
       Left = 0
       Top = 0
       Width = 738
-      Height = 588
-      ActivePage = tsImport
+      Height = 513
+      ActivePage = tsPedidos
       Align = alClient
       TabOrder = 0
       object tsImport: TTabSheet
         Caption = 'Import'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 560
         object pnlRodape: TPanel
           AlignWithMargins = True
           Left = 3
-          Top = 269
+          Top = 194
           Width = 724
           Height = 288
           Align = alBottom
           TabOrder = 0
+          ExplicitTop = 269
           object dbgPrincipal: TDBGrid
             Left = 1
             Top = 35
@@ -134,13 +139,14 @@ object frmPrincipal: TfrmPrincipal
           Left = 0
           Top = 0
           Width = 730
-          Height = 266
+          Height = 191
           Align = alClient
           TabOrder = 1
+          ExplicitHeight = 266
           object pb1: TProgressBar
             AlignWithMargins = True
             Left = 6
-            Top = 239
+            Top = 164
             Width = 718
             Height = 16
             Margins.Left = 5
@@ -149,6 +155,7 @@ object frmPrincipal: TfrmPrincipal
             Margins.Bottom = 10
             Align = alBottom
             TabOrder = 0
+            ExplicitTop = 239
           end
           object edtCaminhoArquivo: TEdit
             Left = 6
@@ -186,7 +193,7 @@ object frmPrincipal: TfrmPrincipal
             Left = 1
             Top = 52
             Width = 728
-            Height = 177
+            Height = 102
             Align = alBottom
             Anchors = [akLeft, akTop, akRight, akBottom]
             DataSource = dtsPrincipal
@@ -202,69 +209,93 @@ object frmPrincipal: TfrmPrincipal
       object tsPedidos: TTabSheet
         Caption = 'Pedidos'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object DBGrid1: TDBGrid
           Left = 0
-          Top = 41
+          Top = 57
           Width = 730
-          Height = 519
+          Height = 428
           Align = alClient
-          DataSource = dtmPrincipal.dtsVwPedidos
+          DataSource = dtmPrincipal.dtsPedidos
           TabOrder = 1
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -11
           TitleFont.Name = 'Tahoma'
           TitleFont.Style = []
-          OnDblClick = DBGrid1DblClick
           Columns = <
             item
               Expanded = False
-              FieldName = 'PEDIDO_ELO7'
-              Width = 63
+              FieldName = 'IDPEDIDO'
               Visible = True
             end
             item
               Expanded = False
-              FieldName = 'COMPRADOR'
-              Width = 163
+              FieldName = 'PEDIDO_ELO7'
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'STATUS_ELO7'
-              Width = 149
+              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'DATA_PEDIDO'
-              Width = 75
+              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'TOTAL_ITENS'
-              Width = 57
+              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'VALOR_TOTAL'
-              Width = 57
+              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'TIPO_FRETE'
+              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'VALOR_FRETE'
+              Width = 64
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'COMPRADOR'
+              Width = 64
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'ITENS'
+              Width = 64
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'IDPEDIDOSCFG'
+              Width = 64
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'IDSTATUSPEDIDO'
+              Width = 64
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DATA_IMPORTACAO'
               Width = 64
               Visible = True
             end>
@@ -273,17 +304,62 @@ object frmPrincipal: TfrmPrincipal
           Left = 0
           Top = 0
           Width = 730
-          Height = 41
+          Height = 57
           Align = alTop
           TabOrder = 0
+          object lbl3: TLabel
+            Left = 306
+            Top = 11
+            Width = 77
+            Height = 13
+            Caption = 'Dt. Importa'#231#227'o:'
+          end
+          object lbl4: TLabel
+            Left = 306
+            Top = 30
+            Width = 17
+            Height = 13
+            Caption = 'De:'
+          end
+          object lbl5: TLabel
+            Left = 432
+            Top = 35
+            Width = 21
+            Height = 13
+            Caption = 'At'#233':'
+          end
           object Button1: TButton
-            Left = 616
-            Top = 10
-            Width = 75
-            Height = 25
+            Left = 584
+            Top = 8
+            Width = 123
+            Height = 43
             Caption = 'Consultar'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentFont = False
             TabOrder = 0
             OnClick = Button1Click
+          end
+          object dtpDtImportacaoDe: TDateTimePicker
+            Left = 329
+            Top = 30
+            Width = 97
+            Height = 21
+            Date = 42805.000000000000000000
+            Time = 42805.000000000000000000
+            TabOrder = 1
+          end
+          object dtpDtImportacaoAte: TDateTimePicker
+            Left = 459
+            Top = 30
+            Width = 97
+            Height = 21
+            Date = 42805.000000000000000000
+            Time = 42805.000000000000000000
+            TabOrder = 2
           end
         end
       end
@@ -293,7 +369,7 @@ object frmPrincipal: TfrmPrincipal
         ExplicitLeft = 0
         ExplicitTop = 0
         ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 560
         object lbl1: TLabel
           Left = 3
           Top = 56
@@ -367,7 +443,7 @@ object frmPrincipal: TfrmPrincipal
   end
   object stbPrincipal: TStatusBar
     Left = 0
-    Top = 645
+    Top = 570
     Width = 738
     Height = 19
     Panels = <

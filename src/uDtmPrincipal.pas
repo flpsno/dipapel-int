@@ -14,20 +14,10 @@ uses
 type
   TdtmPrincipal = class(TDataModule)
     conPrincipal: TFDConnection;
-    qryVwPedidos: TFDQuery;
-    dtsVwPedidos: TDataSource;
     FDGUIxWaitCursor1: TFDGUIxWaitCursor;
     qryGeral: TFDQuery;
     qryInsert: TFDQuery;
     stpGeral: TFDStoredProc;
-    qryVwPedidosPEDIDO_ELO7: TStringField;
-    qryVwPedidosCOMPRADOR: TStringField;
-    qryVwPedidosSTATUS_ELO7: TStringField;
-    qryVwPedidosDATA_PEDIDO: TDateField;
-    qryVwPedidosTOTAL_ITENS: TSmallintField;
-    qryVwPedidosVALOR_TOTAL: TBCDField;
-    qryVwPedidosTIPO_FRETE: TStringField;
-    qryVwPedidosVALOR_FRETE: TBCDField;
     qryVwPedidosHis: TFDQuery;
     dtsVwPedidosHis: TDataSource;
     qryVwPedidosHisPEDIDO_ELO7: TStringField;
@@ -45,9 +35,7 @@ type
     FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink;
     qryVwPedidosHisDATA_HISTORICO: TDateTimeField;
     qryResultadoImportDATA_HISTORICO: TDateTimeField;
-    cdsPedidos: TClientDataSet;
     qryPedidos: TFDQuery;
-    dspPedidos: TDataSetProvider;
     qryPedidosIDPEDIDO: TFDAutoIncField;
     qryPedidosPEDIDO_ELO7: TStringField;
     qryPedidosSTATUS_ELO7: TStringField;
@@ -57,15 +45,6 @@ type
     qryPedidosTIPO_FRETE: TStringField;
     qryPedidosVALOR_FRETE: TBCDField;
     qryPedidosCOMPRADOR: TStringField;
-    cdsPedidosIDPEDIDO: TAutoIncField;
-    cdsPedidosPEDIDO_ELO7: TStringField;
-    cdsPedidosSTATUS_ELO7: TStringField;
-    cdsPedidosDATA_PEDIDO: TDateField;
-    cdsPedidosTOTAL_ITENS: TSmallintField;
-    cdsPedidosVALOR_TOTAL: TBCDField;
-    cdsPedidosTIPO_FRETE: TStringField;
-    cdsPedidosVALOR_FRETE: TBCDField;
-    cdsPedidosCOMPRADOR: TStringField;
     cdsPedidosHis: TClientDataSet;
     qryPedidosHis: TFDQuery;
     dspPedidosHis: TDataSetProvider;
@@ -119,8 +98,12 @@ type
     cdsPedidosPosIDPEDIDO: TIntegerField;
     cdsPedidosPosPOSICAO: TSmallintField;
     stpInsereAtualizaPedidos: TFDStoredProc;
+    dtsPedidos: TDataSource;
+    qryPedidosITENS: TStringField;
+    qryPedidosIDPEDIDOSCFG: TIntegerField;
+    qryPedidosIDSTATUSPEDIDO: TIntegerField;
+    qryPedidosDATA_IMPORTACAO: TDateField;
     procedure DataModuleCreate(Sender: TObject);
-    procedure cdsPedidosAfterPost(DataSet: TDataSet);
     procedure cdsPedidosHisAfterPost(DataSet: TDataSet);
     procedure cdsLogsAfterPost(DataSet: TDataSet);
     procedure cdsConfigAfterPost(DataSet: TDataSet);
@@ -158,17 +141,6 @@ end;
 procedure TdtmPrincipal.cdsLogsAfterPost(DataSet: TDataSet);
 begin
   cdsLogs.ApplyUpdates(-1);
-end;
-
-procedure TdtmPrincipal.cdsPedidosAfterPost(DataSet: TDataSet);
-begin
-  cdsPedidos.ApplyUpdates(-1);
-
-//  cdsSelect.Close;
-//  qrySelect.SQL.Clear;
-//  qrySelect.SQL.Text := 'select idpedido from tblpedidos where codigo = :pCodigo';
-//  qrySelect
-
 end;
 
 procedure TdtmPrincipal.cdsPedidosHisAfterPost(DataSet: TDataSet);
