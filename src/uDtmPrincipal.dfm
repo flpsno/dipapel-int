@@ -142,7 +142,7 @@ object dtmPrincipal: TdtmPrincipal
     Top = 216
   end
   object FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink
-    VendorLib = 'C:\Projetos\dipapel_integra\src\libmysql.dll'
+    VendorLib = '.\..\lib\libmysql.dll'
     Left = 136
     Top = 16
   end

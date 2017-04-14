@@ -20,7 +20,7 @@ object frmPrincipal: TfrmPrincipal
     Left = 0
     Top = 0
     Width = 738
-    Height = 57
+    Height = 51
     Align = alTop
     BevelOuter = bvNone
     Caption = 'Programa para importa'#231#227'o de dados do elo7'
@@ -36,43 +36,42 @@ object frmPrincipal: TfrmPrincipal
   end
   object Panel2: TPanel
     Left = 0
-    Top = 57
+    Top = 51
     Width = 738
-    Height = 513
+    Height = 519
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel2'
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 1
-    object PageControl1: TPageControl
+    ExplicitTop = 57
+    ExplicitHeight = 513
+    object pgcPrincipal: TPageControl
       Left = 0
       Top = 0
       Width = 738
-      Height = 513
-      ActivePage = tsPedidos
+      Height = 519
+      ActivePage = tsImport
       Align = alClient
       TabOrder = 0
+      OnChange = pgcPrincipalChange
       object tsImport: TTabSheet
         Caption = 'Import'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 560
         object pnlRodape: TPanel
           AlignWithMargins = True
           Left = 3
-          Top = 194
+          Top = 240
           Width = 724
-          Height = 288
+          Height = 248
           Align = alBottom
+          ParentColor = True
           TabOrder = 0
-          ExplicitTop = 269
           object dbgPrincipal: TDBGrid
             Left = 1
             Top = 35
             Width = 722
-            Height = 252
+            Height = 212
             Align = alClient
             DataSource = dtmPrincipal.dtsResultadoImport
             TabOrder = 0
@@ -139,14 +138,14 @@ object frmPrincipal: TfrmPrincipal
           Left = 0
           Top = 0
           Width = 730
-          Height = 191
+          Height = 237
           Align = alClient
+          ParentColor = True
           TabOrder = 1
-          ExplicitHeight = 266
           object pb1: TProgressBar
             AlignWithMargins = True
             Left = 6
-            Top = 164
+            Top = 210
             Width = 718
             Height = 16
             Margins.Left = 5
@@ -155,18 +154,17 @@ object frmPrincipal: TfrmPrincipal
             Margins.Bottom = 10
             Align = alBottom
             TabOrder = 0
-            ExplicitTop = 239
           end
           object edtCaminhoArquivo: TEdit
             Left = 6
-            Top = 24
+            Top = 48
             Width = 440
             Height = 19
             TabOrder = 1
           end
           object btnArquivo: TButton
             Left = 452
-            Top = 21
+            Top = 45
             Width = 90
             Height = 25
             Caption = 'Arquivo'
@@ -175,7 +173,7 @@ object frmPrincipal: TfrmPrincipal
           end
           object btnReset: TButton
             Left = 548
-            Top = 21
+            Top = 45
             Width = 75
             Height = 25
             Action = act1
@@ -183,7 +181,7 @@ object frmPrincipal: TfrmPrincipal
           end
           object btnProcessa: TButton
             Left = 629
-            Top = 21
+            Top = 45
             Width = 95
             Height = 25
             Action = actProcessaArquivo
@@ -191,9 +189,9 @@ object frmPrincipal: TfrmPrincipal
           end
           object dbg1: TDBGrid
             Left = 1
-            Top = 52
+            Top = 88
             Width = 728
-            Height = 102
+            Height = 112
             Align = alBottom
             Anchors = [akLeft, akTop, akRight, akBottom]
             DataSource = dtsPrincipal
@@ -204,6 +202,20 @@ object frmPrincipal: TfrmPrincipal
             TitleFont.Name = 'Tahoma'
             TitleFont.Style = []
           end
+          object rgAmbiente: TRadioGroup
+            Left = 1
+            Top = 0
+            Width = 208
+            Height = 42
+            Caption = 'Ambiente'
+            Columns = 2
+            ItemIndex = 0
+            Items.Strings = (
+              'Produ'#231#227'o'
+              'Homologa'#231#227'o')
+            TabOrder = 6
+            OnClick = rgAmbienteClick
+          end
         end
       end
       object tsPedidos: TTabSheet
@@ -213,7 +225,7 @@ object frmPrincipal: TfrmPrincipal
           Left = 0
           Top = 57
           Width = 730
-          Height = 428
+          Height = 434
           Align = alClient
           DataSource = dtmPrincipal.dtsPedidos
           TabOrder = 1
@@ -366,23 +378,19 @@ object frmPrincipal: TfrmPrincipal
       object tsConfig: TTabSheet
         Caption = 'Configura'#231#227'o'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 560
         object lbl1: TLabel
           Left = 3
           Top = 56
-          Width = 70
+          Width = 139
           Height = 13
-          Caption = 'Pasta Destino:'
+          Caption = 'Pasta Arquivos Processados:'
         end
         object lbl2: TLabel
           Left = 3
           Top = 10
-          Width = 68
+          Width = 109
           Height = 13
-          Caption = 'Pasta Origem:'
+          Caption = 'Pasta Arquivos Novos:'
         end
         object btnDiretorio: TBitBtn
           Left = 323
@@ -393,41 +401,15 @@ object frmPrincipal: TfrmPrincipal
           Caption = '...'
           TabOrder = 0
         end
-        object btn2: TBitBtn
-          Left = 79
+        object btnSalvar: TBitBtn
+          Left = 247
           Top = 102
           Width = 70
           Height = 25
-          Action = actPostConfig
-          Caption = 'P&ost'
+          Hint = 'Post'
+          Caption = 'Salvar'
           TabOrder = 1
-        end
-        object btn1: TBitBtn
-          Left = 3
-          Top = 102
-          Width = 70
-          Height = 25
-          Action = actCancelConfig
-          Caption = '&Cancel'
-          TabOrder = 2
-        end
-        object dbePASTA_DESTINO: TDBEdit
-          Left = 3
-          Top = 75
-          Width = 313
-          Height = 19
-          DataField = 'PASTA_DESTINO'
-          DataSource = dtmPrincipal.dtsConfig
-          TabOrder = 3
-        end
-        object dbePASTA_ORIGEM: TDBEdit
-          Left = 3
-          Top = 29
-          Width = 313
-          Height = 19
-          DataField = 'PASTA_ORIGEM'
-          DataSource = dtmPrincipal.dtsConfig
-          TabOrder = 4
+          OnClick = btnSalvarClick
         end
         object btnCarregaDiretorio: TBitBtn
           Left = 323
@@ -436,7 +418,21 @@ object frmPrincipal: TfrmPrincipal
           Height = 25
           Action = actCarregaDiretorioOrig
           Caption = '...'
-          TabOrder = 5
+          TabOrder = 2
+        end
+        object edtArquivosProcessados: TEdit
+          Left = 3
+          Top = 75
+          Width = 314
+          Height = 19
+          TabOrder = 3
+        end
+        object edtArquivosNovos: TEdit
+          Left = 3
+          Top = 27
+          Width = 314
+          Height = 19
+          TabOrder = 4
         end
       end
     end
@@ -552,5 +548,10 @@ object frmPrincipal: TfrmPrincipal
       OnExecute = actProcessaArquivoExecute
       OnUpdate = actProcessaArquivoUpdate
     end
+  end
+  object tmr1: TTimer
+    OnTimer = tmr1Timer
+    Left = 112
+    Top = 16
   end
 end

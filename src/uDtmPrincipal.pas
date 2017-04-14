@@ -9,7 +9,7 @@ uses
   FireDAC.Comp.Client, FireDAC.Phys.ODBCBase, FireDAC.Phys.MSSQL,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.VCLUI.Wait, FireDAC.Comp.UI, System.IniFiles,
-  FireDAC.Phys.MySQL, Datasnap.Provider, Datasnap.DBClient;
+  FireDAC.Phys.MySQL, Datasnap.Provider, Datasnap.DBClient, Constantes;
 
 type
   TdtmPrincipal = class(TDataModule)
@@ -113,15 +113,18 @@ type
   private
     FServer: string;
     FPathOrigem: string;
+    FAMBIENTE: TAmbiente;
     { Private declarations }
     procedure SetServer(const Value: string);
-    procedure SetPathOrigem(const Value: string);
+    procedure SetAMBIENTE(const Value: TAmbiente);
   public
     { Public declarations }
     procedure sbInsereLog(const pNomeArquivo: string; const pNumInseridos, pNumAtualizados: Integer);
     function fcRetornaIDPedido(pPedidoElo7: string): Integer;
     property Server: string read FServer write SetServer;
-    property PathOrigem: string read FPathOrigem write SetPathOrigem;
+    property AMBIENTE: TAmbiente read FAMBIENTE write SetAMBIENTE;
+
+    procedure AlteraAmbiente(pAmbiente: TAmbiente);
   end;
 
 var
@@ -131,7 +134,31 @@ implementation
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
+uses Configuracao;
+
 {$R *.dfm}
+
+procedure TdtmPrincipal.AlteraAmbiente(pAmbiente: TAmbiente);
+var
+  Config: TConfiguracao;
+begin
+  Config := TConfiguracao.Create(pAmbiente);
+  try
+    conPrincipal.Connected := False;
+    conPrincipal.DriverName := 'MySQL';
+    conPrincipal.Params.Clear;
+    conPrincipal.Params.Add('DriverID=MySQL');
+    conPrincipal.Params.Add('Database=' + Config.DB_DATABASE);
+    conPrincipal.Params.Add('User_Name=' + Config.DB_USER);
+    conPrincipal.Params.Add('Password=' + Config.DB_PASSWORD);
+    conPrincipal.Params.Add('Server=' + Config.DB_SERVER);
+    conPrincipal.Params.Add('ApplicationName=Import');
+    //
+    AMBIENTE := pAmbiente;
+  finally
+    FreeAndNil(Config);
+  end;
+end;
 
 procedure TdtmPrincipal.cdsConfigAfterPost(DataSet: TDataSet);
 begin
@@ -162,7 +189,16 @@ procedure TdtmPrincipal.DataModuleCreate(Sender: TObject);
 var
   IniFile: TIniFile;
   sIniPath: string;
+  Config: TConfiguracao;
 begin
+  Config := TConfiguracao.Create(taProducao);
+  try
+    AlteraAmbiente(taProducao);
+  finally
+    FreeAndNil(Config);
+  end;
+
+  {
   sIniPath := GetCurrentDir +  '.\..\cfg\config.ini';
 
   IniFile := TIniFile.Create(sIniPath);
@@ -183,7 +219,7 @@ begin
   end;
 
   FDPhysMySQLDriverLink1.VendorLib := GetCurrentDir +  '.\..\lib\libmysql.dll';
-  cdsConfig.Open;
+  cdsConfig.Open;  }
 end;
 
 procedure TdtmPrincipal.DataModuleDestroy(Sender: TObject);
@@ -221,9 +257,9 @@ begin
   cdsLogs.Post;
 end;
 
-procedure TdtmPrincipal.SetPathOrigem(const Value: string);
+procedure TdtmPrincipal.SetAMBIENTE(const Value: TAmbiente);
 begin
-  FPathOrigem := Value;
+  FAMBIENTE := Value;
 end;
 
 procedure TdtmPrincipal.SetServer(const Value: string);

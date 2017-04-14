@@ -7,13 +7,13 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.StdCtrls, Data.DB, Datasnap.DBClient, Vcl.CheckLst,
   System.Actions, Vcl.ActnList, MIDASLIB, Vcl.Mask, Vcl.DBCtrls, Vcl.DBActns,
-  Vcl.Buttons, Vcl.FileCtrl, Pedido;
+  Vcl.Buttons, Vcl.FileCtrl, Pedido, Constantes;
 
 type
   TfrmPrincipal = class(TForm)
     Panel1: TPanel;
     Panel2: TPanel;
-    PageControl1: TPageControl;
+    pgcPrincipal: TPageControl;
     tsImport: TTabSheet;
     tsPedidos: TTabSheet;
     DBGrid1: TDBGrid;
@@ -45,13 +45,10 @@ type
     stbPrincipal: TStatusBar;
     lbl1: TLabel;
     btnDiretorio: TBitBtn;
-    btn2: TBitBtn;
+    btnSalvar: TBitBtn;
     actCancelConfig: TDataSetCancel;
     actPostConfig: TDataSetPost;
-    btn1: TBitBtn;
     actCarregaDiretorioDest: TAction;
-    dbePASTA_DESTINO: TDBEdit;
-    dbePASTA_ORIGEM: TDBEdit;
     lbl2: TLabel;
     btnCarregaDiretorio: TBitBtn;
     actCarregaDiretorioOrig: TAction;
@@ -63,6 +60,10 @@ type
     dtpDtImportacaoAte: TDateTimePicker;
     lbl4: TLabel;
     lbl5: TLabel;
+    rgAmbiente: TRadioGroup;
+    edtArquivosProcessados: TEdit;
+    edtArquivosNovos: TEdit;
+    tmr1: TTimer;
     procedure Button1Click(Sender: TObject);
     procedure btnArquivoClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -74,6 +75,10 @@ type
     procedure act1Update(Sender: TObject);
     procedure actProcessaArquivoExecute(Sender: TObject);
     procedure actProcessaArquivoUpdate(Sender: TObject);
+    procedure rgAmbienteClick(Sender: TObject);
+    procedure pgcPrincipalChange(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure tmr1Timer(Sender: TObject);
   private
     { Private declarations }
   public
@@ -87,7 +92,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDtmPrincipal, uFrmPedidosHistorico;
+uses uDtmPrincipal, uFrmPedidosHistorico, Configuracao;
 
 procedure TfrmPrincipal.Button1Click(Sender: TObject);
 begin
@@ -181,13 +186,7 @@ var
   chosenDirectory: string;
 begin
   if selectdirectory('Selecione o diretório dos importados', 'C:\', chosenDirectory) then
-  begin
-    if dtmPrincipal.cdsConfig.IsEmpty then
-      dtmPrincipal.cdsConfig.Append
-    else
-      dtmPrincipal.cdsConfig.Edit;
-    dtmPrincipal.cdsConfigPASTA_DESTINO.AsString := chosenDirectory;
-  end;
+    edtArquivosProcessados.Text := chosenDirectory;
 end;
 
 procedure TfrmPrincipal.actCarregaDiretorioOrigExecute(Sender: TObject);
@@ -195,13 +194,7 @@ var
   chosenDirectory: string;
 begin
   if selectdirectory('Selecione o diretório dos importados', 'C:\', chosenDirectory) then
-  begin
-    if dtmPrincipal.cdsConfig.IsEmpty then
-      dtmPrincipal.cdsConfig.Append
-    else
-      dtmPrincipal.cdsConfig.Edit;
-    dtmPrincipal.cdsConfigPASTA_ORIGEM.AsString := chosenDirectory;
-  end;
+    edtArquivosNovos.Text := chosenDirectory;
 end;
 
 procedure TfrmPrincipal.actProcessaArquivoExecute(Sender: TObject);
@@ -209,64 +202,76 @@ var
   iRegistrosNovos, iRegistrosAtualizados: Integer;
   sArquivo, sArquivoFinal: string;
   objPedido: TPedido;
+  Config: TConfiguracao;
 begin
   if not cdsPrincipal.IsEmpty then
   begin
-    iRegistrosNovos := 0;
-    iRegistrosAtualizados := 0;
-
-    sArquivo := ExtractFileName(edtCaminhoArquivo.Text);
-
-    pb1.Max := cdsPrincipal.RecordCount;
-    pb1.Step := Round(cdsPrincipal.RecordCount / 100);
-
-    cdsPrincipal.First;
-    while not cdsPrincipal.Eof do
-    begin
-      objPedido := TPedido.Create;
-      try
-        objPedido.PEDIDO_ELO7 := cdsPrincipalPEDIDO_ELO7.AsString;
-        objPedido.STATUS_ELO7 := cdsPrincipalSTATUS_ELO7.AsString;
-        objPedido.DATA_PEDIDO := cdsPrincipalDATA_PEDIDO.AsDateTime;
-        objPedido.TOTAL_ITENS := cdsPrincipalTOTAL_ITENS.AsInteger;
-        objPedido.VALOR_TOTAL := cdsPrincipalVALOR_TOTAL.AsFloat;
-        objPedido.TIPO_FRETE := cdsPrincipalTIPO_FRETE.AsString;
-        objPedido.VALOR_FRETE := cdsPrincipalVALOR_FRETE.AsFloat;
-        objPedido.COMPRADOR := cdsPrincipalCOMPRADOR.AsString;
-
-        case objPedido.InserePedido of
-          1: Inc(iRegistrosNovos);
-          2: Inc(iRegistrosAtualizados);
-        end;
-      finally
-        objPedido.Free;
+    Config := TConfiguracao.Create(dtmPrincipal.AMBIENTE);
+    try
+      if (Config.PATH_ARQUIVO_PROCESSADO = '') then
+      begin
+        ShowMessage('Não há path para arquivos processados!!!');
+        Exit;
       end;
 
-      pb1.Position := cdsPrincipal.RecNo +1;
-      cdsPrincipal.Next;
+      iRegistrosNovos := 0;
+      iRegistrosAtualizados := 0;
+
+      sArquivo := ExtractFileName(edtCaminhoArquivo.Text);
+
+      pb1.Max := cdsPrincipal.RecordCount;
+      pb1.Step := Round(cdsPrincipal.RecordCount / 100);
+
+      cdsPrincipal.First;
+      while not cdsPrincipal.Eof do
+      begin
+        objPedido := TPedido.Create;
+        try
+          objPedido.PEDIDO_ELO7 := cdsPrincipalPEDIDO_ELO7.AsString;
+          objPedido.STATUS_ELO7 := cdsPrincipalSTATUS_ELO7.AsString;
+          objPedido.DATA_PEDIDO := cdsPrincipalDATA_PEDIDO.AsDateTime;
+          objPedido.TOTAL_ITENS := cdsPrincipalTOTAL_ITENS.AsInteger;
+          objPedido.VALOR_TOTAL := cdsPrincipalVALOR_TOTAL.AsFloat;
+          objPedido.TIPO_FRETE := cdsPrincipalTIPO_FRETE.AsString;
+          objPedido.VALOR_FRETE := cdsPrincipalVALOR_FRETE.AsFloat;
+          objPedido.COMPRADOR := cdsPrincipalCOMPRADOR.AsString;
+
+          case objPedido.InserePedido of
+            1: Inc(iRegistrosNovos);
+            2: Inc(iRegistrosAtualizados);
+          end;
+        finally
+          objPedido.Free;
+        end;
+
+        pb1.Position := cdsPrincipal.RecNo +1;
+        cdsPrincipal.Next;
+      end;
+
+      cdsPrincipal.First;
+
+      dtmPrincipal.qryResultadoImport.Close;
+  //    dtmPrincipal.qryResultadoImport.ParamByName('pData').AsDate := Now;
+      dtmPrincipal.qryResultadoImport.Open();
+
+      sArquivoFinal := Copy(sArquivo, 1,Length(sArquivo) -4)
+        + '_' + FormatDateTime('yyyymmdd', Now)
+        + '_' + IntToStr(iRegistrosNovos + iRegistrosAtualizados) + '_alteracoes'
+        + ExtractFileExt(sArquivo);
+
+      // registra log com o nome do arquivo e teve registros novos ou atualizados
+      if ((iRegistrosNovos + iRegistrosAtualizados) > 0) then
+        dtmPrincipal.sbInsereLog(sArquivoFinal, iRegistrosNovos, iRegistrosAtualizados);
+
+      if System.SysUtils.DirectoryExists(Config.PATH_ARQUIVO_PROCESSADO) then
+        MoveFile(PChar(edtCaminhoArquivo.Text), PChar(Config.PATH_ARQUIVO_PROCESSADO + '\' + sArquivoFinal));
+
+      ShowMessage('Concluído!!!' + #13
+        + 'Registros Inseridos: ' + IntToStr(iRegistrosNovos) + #13
+        + 'Registros Atualizados: ' + IntToStr(iRegistrosAtualizados));
+    finally
+      FreeAndNil(Config);
     end;
-
-    cdsPrincipal.First;
-
-    dtmPrincipal.qryResultadoImport.Close;
-//    dtmPrincipal.qryResultadoImport.ParamByName('pData').AsDate := Now;
-    dtmPrincipal.qryResultadoImport.Open();
-
-    sArquivoFinal := Copy(sArquivo, 1,Length(sArquivo) -4)
-      + '_' + FormatDateTime('yyyymmdd', Now)
-      + '_' + IntToStr(iRegistrosNovos + iRegistrosAtualizados) + '_alteracoes'
-      + ExtractFileExt(sArquivo);
-
-    // registra log com o nome do arquivo e teve registros novos ou atualizados
-    if ((iRegistrosNovos + iRegistrosAtualizados) > 0) then
-      dtmPrincipal.sbInsereLog(sArquivoFinal, iRegistrosNovos, iRegistrosAtualizados);
-
-    if System.SysUtils.DirectoryExists(dtmPrincipal.cdsConfigPASTA_DESTINO.AsString) then
-      MoveFile(PChar(edtCaminhoArquivo.Text), PChar(dtmPrincipal.cdsConfigPASTA_DESTINO.AsString + '\' + sArquivoFinal));
-
-    ShowMessage('Concluído!!!' + #13
-      + 'Registros Inseridos: ' + IntToStr(iRegistrosNovos) + #13
-      + 'Registros Atualizados: ' + IntToStr(iRegistrosAtualizados));
   end;
 end;
 
@@ -276,15 +281,34 @@ begin
     and not cdsPrincipal.IsEmpty;
 end;
 
-procedure TfrmPrincipal.btnArquivoClick(Sender: TObject);
+procedure TfrmPrincipal.btnSalvarClick(Sender: TObject);
+var
+  Config: TConfiguracao;
 begin
-  if System.SysUtils.DirectoryExists(dtmPrincipal.PathOrigem) then
-    odgPrincipal.InitialDir := dtmPrincipal.PathOrigem;
+  Config := TConfiguracao.Create(dtmPrincipal.AMBIENTE);
+  try
+    Config.SalvarPaths(edtArquivosNovos.Text, edtArquivosProcessados.Text);
+  finally
+    FreeAndNil(Config);
+  end;
+end;
 
-  if odgPrincipal.Execute then
-  begin
-    edtCaminhoArquivo.Text := odgPrincipal.FileName;
-    actCarregaArquivo.Execute;
+procedure TfrmPrincipal.btnArquivoClick(Sender: TObject);
+var
+  Config: TConfiguracao;
+begin
+  Config := TConfiguracao.Create(dtmPrincipal.AMBIENTE);
+  try
+    if System.SysUtils.DirectoryExists(Config.PATH_ARQUIVO_NOVO) then
+      odgPrincipal.InitialDir := Config.PATH_ARQUIVO_NOVO;
+
+    if odgPrincipal.Execute then
+    begin
+      edtCaminhoArquivo.Text := odgPrincipal.FileName;
+      actCarregaArquivo.Execute;
+    end;
+  finally
+    FreeAndNil(Config);
   end;
 end;
 
@@ -296,13 +320,53 @@ end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);
 begin
-  PageControl1.ActivePageIndex := 0;
+  pgcPrincipal.ActivePageIndex := 0;
   stbPrincipal.Panels[0].Text := 'Server DB: ' + dtmPrincipal.Server;
   stbPrincipal.Panels[1].Text := 'versão: ' + dtmPrincipal.Server;
   //
   dtpDtImportacaoDe.Date := Now;
   dtpDtImportacaoAte.Date := Now;
 
+end;
+
+procedure TfrmPrincipal.pgcPrincipalChange(Sender: TObject);
+var
+  Config: TConfiguracao;
+begin
+  if (pgcPrincipal.ActivePage = tsConfig) then
+  begin
+    Config := TConfiguracao.Create(dtmPrincipal.AMBIENTE);
+    try
+      edtArquivosNovos.Text := Config.PATH_ARQUIVO_NOVO;
+      edtArquivosProcessados.Text := Config.PATH_ARQUIVO_PROCESSADO;
+    finally
+      FreeAndNil(Config);
+    end;
+  end;
+end;
+
+procedure TfrmPrincipal.rgAmbienteClick(Sender: TObject);
+begin
+  case rgAmbiente.ItemIndex of
+    0: dtmPrincipal.AlteraAmbiente(taProducao);
+    1: dtmPrincipal.AlteraAmbiente(taHomologacao);
+  end;
+end;
+
+procedure TfrmPrincipal.tmr1Timer(Sender: TObject);
+begin
+  case dtmPrincipal.AMBIENTE of
+    taProducao:
+    begin
+      Self.Color := clBlue;
+      stbPrincipal.Panels[2].Text := 'PRODUÇÃO';
+    end;
+    taHomologacao:
+    begin
+      Self.Color := clYellow;
+      stbPrincipal.Panels[2].Text := 'HOMOLOGAÇÃO';
+    end;
+  end;
 end;
 
 end.
