@@ -17,6 +17,7 @@ type
     FVALOR_FRETE: Double;
     FCOMPRADOR: string;
     FDATA_IMPORTACAO: TDate;
+    FIDPEDIDO: Integer;
     procedure SetPEDIDO_ELO7(const Value: string);
     procedure SetSTATUS_ELO7(const Value: string);
     procedure SetDATA_PEDIDO(const Value: TDate);
@@ -26,8 +27,10 @@ type
     procedure SetVALOR_FRETE(const Value: Double);
     procedure SetCOMPRADOR(const Value: string);
     procedure SetDATA_IMPORTACAO(const Value: TDate);
+    procedure SetIDPEDIDO(const Value: Integer);
 
   public
+    property IDPEDIDO: Integer read FIDPEDIDO write SetIDPEDIDO;
     property PEDIDO_ELO7: string read FPEDIDO_ELO7 write SetPEDIDO_ELO7;
     property STATUS_ELO7: string read FSTATUS_ELO7 write SetSTATUS_ELO7;
     property DATA_PEDIDO: TDate read FDATA_PEDIDO write SetDATA_PEDIDO;
@@ -81,6 +84,11 @@ end;
 procedure TPedido.SetDATA_PEDIDO(const Value: TDate);
 begin
   FDATA_PEDIDO := Value;
+end;
+
+procedure TPedido.SetIDPEDIDO(const Value: Integer);
+begin
+  FIDPEDIDO := Value;
 end;
 
 procedure TPedido.SetPEDIDO_ELO7(const Value: string);

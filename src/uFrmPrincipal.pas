@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.StdCtrls, Data.DB, Datasnap.DBClient, Vcl.CheckLst,
   System.Actions, Vcl.ActnList, MIDASLIB, Vcl.Mask, Vcl.DBCtrls, Vcl.DBActns,
-  Vcl.Buttons, Vcl.FileCtrl, Pedido, Constantes;
+  Vcl.Buttons, Vcl.FileCtrl, Pedido, Constantes, PedidoDAO, System.Generics.Collections;
 
 type
   TfrmPrincipal = class(TForm)
@@ -64,6 +64,7 @@ type
     edtArquivosProcessados: TEdit;
     edtArquivosNovos: TEdit;
     tmr1: TTimer;
+    btn1: TButton;
     procedure Button1Click(Sender: TObject);
     procedure btnArquivoClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -79,6 +80,7 @@ type
     procedure pgcPrincipalChange(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
     procedure tmr1Timer(Sender: TObject);
+    procedure btn1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -290,6 +292,29 @@ begin
     Config.SalvarPaths(edtArquivosNovos.Text, edtArquivosProcessados.Text);
   finally
     FreeAndNil(Config);
+  end;
+end;
+
+procedure TfrmPrincipal.btn1Click(Sender: TObject);
+var
+  pedidoDao: TPedidoDAO;
+  listaPedidos: TObjectList<TPedido>;
+  pedidoAux: TPedido;
+begin
+  pedidoDao := TPedidoDAO.Create(dtmPrincipal.conPrincipal);
+  try
+    listaPedidos := pedidoDao.ObterTodos;
+    try
+      for pedidoAux in listaPedidos do
+      begin
+        ShowMessage(pedidoAux.PEDIDO_ELO7);
+      end;
+    finally
+      listaPedidos.Free;
+    end;
+
+  finally
+    pedidoDao.Free
   end;
 end;
 

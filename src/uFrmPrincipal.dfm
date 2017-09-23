@@ -33,6 +33,15 @@ object frmPrincipal: TfrmPrincipal
     ParentCtl3D = False
     ParentFont = False
     TabOrder = 0
+    object btn1: TButton
+      Left = 392
+      Top = 32
+      Width = 75
+      Height = 25
+      Caption = 'btn1'
+      TabOrder = 0
+      OnClick = btn1Click
+    end
   end
   object Panel2: TPanel
     Left = 0
@@ -45,8 +54,6 @@ object frmPrincipal: TfrmPrincipal
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 1
-    ExplicitTop = 57
-    ExplicitHeight = 513
     object pgcPrincipal: TPageControl
       Left = 0
       Top = 0

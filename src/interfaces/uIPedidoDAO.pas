@@ -3,7 +3,7 @@ unit uIPedidoDAO;
 interface
 
 uses
-  Pedido;
+  Pedido, System.Generics.Collections;
 
 type
   IPedidoDAO = interface
@@ -11,6 +11,7 @@ type
 
     function Inserir(pPedido: TPedido): Boolean;
     function Atualizar(pPedido: TPedido): Boolean;
+    function ObterTodos: TObjectList<TPedido>;
 
   end;
 
