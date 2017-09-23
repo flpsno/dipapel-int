@@ -55,16 +55,26 @@ type
     dbg1: TDBGrid;
     act1: TAction;
     actProcessaArquivo: TAction;
-    dtpDtImportacaoDe: TDateTimePicker;
-    lbl3: TLabel;
-    dtpDtImportacaoAte: TDateTimePicker;
-    lbl4: TLabel;
-    lbl5: TLabel;
     rgAmbiente: TRadioGroup;
     edtArquivosProcessados: TEdit;
     edtArquivosNovos: TEdit;
     tmr1: TTimer;
-    btn1: TButton;
+    cdsPedidos: TClientDataSet;
+    dtsPedidos: TDataSource;
+    grp1: TGroupBox;
+    lbl4: TLabel;
+    dtpDtImportacaoAte: TDateTimePicker;
+    lbl5: TLabel;
+    dtpDtImportacaoDe: TDateTimePicker;
+    cdsPedidosPEDIDO_ELO7: TStringField;
+    cdsPedidosCOMPRADOR: TStringField;
+    cdsPedidosSTATUS_ELO7: TStringField;
+    cdsPedidosDATA_PEDIDO: TDateField;
+    cdsPedidosTOTAL_ITENS: TSmallintField;
+    cdsPedidosVALOR_TOTAL: TFloatField;
+    cdsPedidosTIPO_FRETE: TStringField;
+    cdsPedidosVALOR_FRETE: TFloatField;
+    cdsPedidosIDPEDIDO: TIntegerField;
     procedure Button1Click(Sender: TObject);
     procedure btnArquivoClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -80,9 +90,10 @@ type
     procedure pgcPrincipalChange(Sender: TObject);
     procedure btnSalvarClick(Sender: TObject);
     procedure tmr1Timer(Sender: TObject);
-    procedure btn1Click(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
+    FPedidoDAO: TPedidoDAO;
   public
     { Public declarations }
   end;
@@ -97,13 +108,31 @@ implementation
 uses uDtmPrincipal, uFrmPedidosHistorico, Configuracao;
 
 procedure TfrmPrincipal.Button1Click(Sender: TObject);
+var
+  listaPedidos: TObjectList<TPedido>;
+  pedidoAux: TPedido;
 begin
-  dtmPrincipal.qryPedidos.Close;
-  dtmPrincipal.qryPedidos.SQL.Text :=
-    'SELECT * FROM tblpedidos WHERE DATA_IMPORTACAO BETWEEN :DATA_IMPORTACAO_DE AND :DATA_IMPORTACAO_ATE ORDER BY DATA_PEDIDO DESC';
-  dtmPrincipal.qryPedidos.ParamByName('DATA_IMPORTACAO_DE').AsDate := dtpDtImportacaoDe.Date;
-  dtmPrincipal.qryPedidos.ParamByName('DATA_IMPORTACAO_ATE').AsDate := dtpDtImportacaoAte.Date;
-  dtmPrincipal.qryPedidos.Open();
+  cdsPedidos.EmptyDataSet;
+
+  listaPedidos := FPedidoDAO.ObterPorDataImportacao(dtpDtImportacaoDe.Date, dtpDtImportacaoAte.Date);
+  try
+    for pedidoAux in listaPedidos do
+    begin
+      cdsPedidos.Append;
+      cdsPedidosIDPEDIDO.AsInteger := pedidoAux.IDPEDIDO;
+      cdsPedidosPEDIDO_ELO7.AsString := pedidoAux.PEDIDO_ELO7;
+      cdsPedidosCOMPRADOR.AsString := pedidoAux.COMPRADOR;
+      cdsPedidosSTATUS_ELO7.AsString := pedidoAux.STATUS_ELO7;
+      cdsPedidosDATA_PEDIDO.AsDateTime := pedidoAux.DATA_PEDIDO;
+      cdsPedidosTOTAL_ITENS.AsInteger := pedidoAux.TOTAL_ITENS;
+      cdsPedidosVALOR_TOTAL.AsFloat := pedidoAux.VALOR_TOTAL;
+      cdsPedidosTIPO_FRETE.AsString := pedidoAux.TIPO_FRETE;
+      cdsPedidosVALOR_FRETE.AsFloat := pedidoAux.VALOR_FRETE;
+      cdsPedidos.Post;
+    end;
+  finally
+    listaPedidos.Free;
+  end;
 end;
 
 procedure TfrmPrincipal.act1Execute(Sender: TObject);
@@ -295,29 +324,6 @@ begin
   end;
 end;
 
-procedure TfrmPrincipal.btn1Click(Sender: TObject);
-var
-  pedidoDao: TPedidoDAO;
-  listaPedidos: TObjectList<TPedido>;
-  pedidoAux: TPedido;
-begin
-  pedidoDao := TPedidoDAO.Create(dtmPrincipal.conPrincipal);
-  try
-    listaPedidos := pedidoDao.ObterTodos;
-    try
-      for pedidoAux in listaPedidos do
-      begin
-        ShowMessage(pedidoAux.PEDIDO_ELO7);
-      end;
-    finally
-      listaPedidos.Free;
-    end;
-
-  finally
-    pedidoDao.Free
-  end;
-end;
-
 procedure TfrmPrincipal.btnArquivoClick(Sender: TObject);
 var
   Config: TConfiguracao;
@@ -341,6 +347,17 @@ procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
   cdsPrincipal.CreateDataSet;
   cdsPrincipal.Open;
+
+  cdsPedidos.CreateDataSet;
+  cdsPedidos.Open;
+
+  FPedidoDAO := TPedidoDAO.Create(dtmPrincipal.conPrincipal);
+end;
+
+procedure TfrmPrincipal.FormDestroy(Sender: TObject);
+begin
+  if (FPedidoDAO <> nil) then
+    FPedidoDAO.Free;
 end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);

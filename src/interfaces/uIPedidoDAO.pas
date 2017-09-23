@@ -12,6 +12,7 @@ type
     function Inserir(pPedido: TPedido): Boolean;
     function Atualizar(pPedido: TPedido): Boolean;
     function ObterTodos: TObjectList<TPedido>;
+    function ObterPorDataImportacao(pDataDe, pDataAte: TDate): TObjectList<TPedido>;
 
   end;
 

@@ -13,6 +13,7 @@ object frmPrincipal: TfrmPrincipal
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -33,15 +34,6 @@ object frmPrincipal: TfrmPrincipal
     ParentCtl3D = False
     ParentFont = False
     TabOrder = 0
-    object btn1: TButton
-      Left = 392
-      Top = 32
-      Width = 75
-      Height = 25
-      Caption = 'btn1'
-      TabOrder = 0
-      OnClick = btn1Click
-    end
   end
   object Panel2: TPanel
     Left = 0
@@ -234,7 +226,7 @@ object frmPrincipal: TfrmPrincipal
           Width = 730
           Height = 434
           Align = alClient
-          DataSource = dtmPrincipal.dtsPedidos
+          DataSource = dtsPedidos
           TabOrder = 1
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
@@ -254,68 +246,37 @@ object frmPrincipal: TfrmPrincipal
             end
             item
               Expanded = False
+              FieldName = 'COMPRADOR'
+              Visible = True
+            end
+            item
+              Expanded = False
               FieldName = 'STATUS_ELO7'
-              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'DATA_PEDIDO'
-              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'TOTAL_ITENS'
-              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'VALOR_TOTAL'
-              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'TIPO_FRETE'
-              Width = 64
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'VALOR_FRETE'
-              Width = 64
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'COMPRADOR'
-              Width = 64
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'ITENS'
-              Width = 64
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'IDPEDIDOSCFG'
-              Width = 64
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'IDSTATUSPEDIDO'
-              Width = 64
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'DATA_IMPORTACAO'
-              Width = 64
               Visible = True
             end>
         end
@@ -326,32 +287,16 @@ object frmPrincipal: TfrmPrincipal
           Height = 57
           Align = alTop
           TabOrder = 0
-          object lbl3: TLabel
-            Left = 306
-            Top = 11
-            Width = 77
-            Height = 13
-            Caption = 'Dt. Importa'#231#227'o:'
-          end
-          object lbl4: TLabel
-            Left = 306
-            Top = 30
-            Width = 17
-            Height = 13
-            Caption = 'De:'
-          end
-          object lbl5: TLabel
-            Left = 432
-            Top = 35
-            Width = 21
-            Height = 13
-            Caption = 'At'#233':'
-          end
+          ExplicitLeft = 673
+          ExplicitWidth = 491
           object Button1: TButton
-            Left = 584
-            Top = 8
+            AlignWithMargins = True
+            Left = 279
+            Top = 6
             Width = 123
-            Height = 43
+            Height = 47
+            Margins.Top = 5
+            Align = alLeft
             Caption = 'Consultar'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -361,24 +306,51 @@ object frmPrincipal: TfrmPrincipal
             ParentFont = False
             TabOrder = 0
             OnClick = Button1Click
+            ExplicitLeft = 584
+            ExplicitTop = 8
+            ExplicitHeight = 43
           end
-          object dtpDtImportacaoDe: TDateTimePicker
-            Left = 329
-            Top = 30
-            Width = 97
-            Height = 21
-            Date = 42805.000000000000000000
-            Time = 42805.000000000000000000
+          object grp1: TGroupBox
+            AlignWithMargins = True
+            Left = 4
+            Top = 4
+            Width = 269
+            Height = 49
+            Align = alLeft
+            Caption = 'Data de Importa'#231#227'o '
             TabOrder = 1
-          end
-          object dtpDtImportacaoAte: TDateTimePicker
-            Left = 459
-            Top = 30
-            Width = 97
-            Height = 21
-            Date = 42805.000000000000000000
-            Time = 42805.000000000000000000
-            TabOrder = 2
+            object lbl4: TLabel
+              Left = 3
+              Top = 22
+              Width = 17
+              Height = 13
+              Caption = 'De:'
+            end
+            object lbl5: TLabel
+              Left = 132
+              Top = 22
+              Width = 21
+              Height = 13
+              Caption = 'At'#233':'
+            end
+            object dtpDtImportacaoAte: TDateTimePicker
+              Left = 159
+              Top = 19
+              Width = 97
+              Height = 21
+              Date = 42805.000000000000000000
+              Time = 42805.000000000000000000
+              TabOrder = 0
+            end
+            object dtpDtImportacaoDe: TDateTimePicker
+              Left = 26
+              Top = 19
+              Width = 97
+              Height = 21
+              Date = 42805.000000000000000000
+              Time = 42805.000000000000000000
+              TabOrder = 1
+            end
           end
         end
       end
@@ -560,5 +532,48 @@ object frmPrincipal: TfrmPrincipal
     OnTimer = tmr1Timer
     Left = 112
     Top = 16
+  end
+  object cdsPedidos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 272
+    Top = 232
+    object cdsPedidosPEDIDO_ELO7: TStringField
+      FieldName = 'PEDIDO_ELO7'
+      Size = 15
+    end
+    object cdsPedidosCOMPRADOR: TStringField
+      FieldName = 'COMPRADOR'
+      Size = 100
+    end
+    object cdsPedidosSTATUS_ELO7: TStringField
+      FieldName = 'STATUS_ELO7'
+      Size = 50
+    end
+    object cdsPedidosDATA_PEDIDO: TDateField
+      FieldName = 'DATA_PEDIDO'
+    end
+    object cdsPedidosTOTAL_ITENS: TSmallintField
+      FieldName = 'TOTAL_ITENS'
+    end
+    object cdsPedidosVALOR_TOTAL: TFloatField
+      FieldName = 'VALOR_TOTAL'
+    end
+    object cdsPedidosTIPO_FRETE: TStringField
+      FieldName = 'TIPO_FRETE'
+      Size = 50
+    end
+    object cdsPedidosVALOR_FRETE: TFloatField
+      FieldName = 'VALOR_FRETE'
+    end
+    object cdsPedidosIDPEDIDO: TIntegerField
+      FieldName = 'IDPEDIDO'
+    end
+  end
+  object dtsPedidos: TDataSource
+    AutoEdit = False
+    DataSet = cdsPedidos
+    Left = 344
+    Top = 232
   end
 end

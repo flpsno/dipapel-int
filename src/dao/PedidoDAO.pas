@@ -23,6 +23,7 @@ type
     function Inserir(pPedido: TPedido): Boolean;
     function Atualizar(pPedido: TPedido): Boolean;
     function ObterTodos: TObjectList<TPedido>;
+    function ObterPorDataImportacao(pDataDe, pDataAte: TDate): TObjectList<TPedido>;
   end;
 
 implementation
@@ -53,6 +54,13 @@ begin
   Result := False;
 end;
 
+function TPedidoDAO.ObterPorDataImportacao(pDataDe,
+  pDataAte: TDate): TObjectList<TPedido>;
+begin
+  Result := _Obter('data_importacao between ''%s'' and ''%s''',
+    [FormatDateTime('yyyy-mm-dd', pDataDe), FormatDateTime('yyyy-mm-dd', pDataAte)]);
+end;
+
 function TPedidoDAO.ObterTodos: TObjectList<TPedido>;
 begin
   Result := _Obter('', []);
@@ -71,10 +79,9 @@ begin
   sSQL := SQL_SELECT;
 
   if (pWhere <> '') then
-  begin
-    sSQL := sSQL + ' and ' + pWhere;
-    Format(sSQL, pCampos);
-  end;
+    sSQL := sSQL + ' and ' + Format(pWhere, pCampos);
+
+  sSQL := sSQL + ' order by data_pedido';
 
   FQueryAux.Close;
   FQueryAux.SQL.Clear;

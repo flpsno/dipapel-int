@@ -16,8 +16,8 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TfrmPrincipal, frmPrincipal);
   Application.CreateForm(TdtmPrincipal, dtmPrincipal);
+  Application.CreateForm(TfrmPrincipal, frmPrincipal);
   Application.CreateForm(TfrmPedidosHistorico, frmPedidosHistorico);
   Application.Run;
 end.
