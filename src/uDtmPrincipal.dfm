@@ -146,88 +146,6 @@ object dtmPrincipal: TdtmPrincipal
     Left = 136
     Top = 16
   end
-  object qryPedidos: TFDQuery
-    Connection = conPrincipal
-    SQL.Strings = (
-      'select * from tblpedidos')
-    Left = 48
-    Top = 312
-    object qryPedidosIDPEDIDO: TFDAutoIncField
-      FieldName = 'IDPEDIDO'
-      Origin = 'IDPEDIDO'
-      ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
-    end
-    object qryPedidosPEDIDO_ELO7: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'PEDIDO_ELO7'
-      Origin = 'PEDIDO_ELO7'
-      Size = 15
-    end
-    object qryPedidosSTATUS_ELO7: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'STATUS_ELO7'
-      Origin = 'STATUS_ELO7'
-      Size = 50
-    end
-    object qryPedidosDATA_PEDIDO: TDateField
-      AutoGenerateValue = arDefault
-      FieldName = 'DATA_PEDIDO'
-      Origin = 'DATA_PEDIDO'
-    end
-    object qryPedidosTOTAL_ITENS: TSmallintField
-      FieldName = 'TOTAL_ITENS'
-      Origin = 'TOTAL_ITENS'
-      Required = True
-    end
-    object qryPedidosVALOR_TOTAL: TBCDField
-      FieldName = 'VALOR_TOTAL'
-      Origin = 'VALOR_TOTAL'
-      Required = True
-      Precision = 15
-      Size = 2
-    end
-    object qryPedidosTIPO_FRETE: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'TIPO_FRETE'
-      Origin = 'TIPO_FRETE'
-      Size = 50
-    end
-    object qryPedidosVALOR_FRETE: TBCDField
-      FieldName = 'VALOR_FRETE'
-      Origin = 'VALOR_FRETE'
-      Required = True
-      Precision = 15
-      Size = 2
-    end
-    object qryPedidosCOMPRADOR: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'COMPRADOR'
-      Origin = 'COMPRADOR'
-      Size = 100
-    end
-    object qryPedidosITENS: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'ITENS'
-      Origin = 'ITENS'
-      Size = 250
-    end
-    object qryPedidosIDPEDIDOSCFG: TIntegerField
-      AutoGenerateValue = arDefault
-      FieldName = 'IDPEDIDOSCFG'
-      Origin = 'IDPEDIDOSCFG'
-    end
-    object qryPedidosIDSTATUSPEDIDO: TIntegerField
-      FieldName = 'IDSTATUSPEDIDO'
-      Origin = 'IDSTATUSPEDIDO'
-      Required = True
-    end
-    object qryPedidosDATA_IMPORTACAO: TDateField
-      FieldName = 'DATA_IMPORTACAO'
-      Origin = 'DATA_IMPORTACAO'
-      Required = True
-    end
-  end
   object cdsPedidosHis: TClientDataSet
     Aggregates = <>
     Params = <>
@@ -579,11 +497,5 @@ object dtmPrincipal: TdtmPrincipal
         ParamType = ptOutput
         Size = 100
       end>
-  end
-  object dtsPedidos: TDataSource
-    AutoEdit = False
-    DataSet = qryPedidos
-    Left = 152
-    Top = 312
   end
 end

@@ -35,16 +35,6 @@ type
     FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink;
     qryVwPedidosHisDATA_HISTORICO: TDateTimeField;
     qryResultadoImportDATA_HISTORICO: TDateTimeField;
-    qryPedidos: TFDQuery;
-    qryPedidosIDPEDIDO: TFDAutoIncField;
-    qryPedidosPEDIDO_ELO7: TStringField;
-    qryPedidosSTATUS_ELO7: TStringField;
-    qryPedidosDATA_PEDIDO: TDateField;
-    qryPedidosTOTAL_ITENS: TSmallintField;
-    qryPedidosVALOR_TOTAL: TBCDField;
-    qryPedidosTIPO_FRETE: TStringField;
-    qryPedidosVALOR_FRETE: TBCDField;
-    qryPedidosCOMPRADOR: TStringField;
     cdsPedidosHis: TClientDataSet;
     qryPedidosHis: TFDQuery;
     dspPedidosHis: TDataSetProvider;
@@ -98,11 +88,6 @@ type
     cdsPedidosPosIDPEDIDO: TIntegerField;
     cdsPedidosPosPOSICAO: TSmallintField;
     stpInsereAtualizaPedidos: TFDStoredProc;
-    dtsPedidos: TDataSource;
-    qryPedidosITENS: TStringField;
-    qryPedidosIDPEDIDOSCFG: TIntegerField;
-    qryPedidosIDSTATUSPEDIDO: TIntegerField;
-    qryPedidosDATA_IMPORTACAO: TDateField;
     procedure DataModuleCreate(Sender: TObject);
     procedure cdsPedidosHisAfterPost(DataSet: TDataSet);
     procedure cdsLogsAfterPost(DataSet: TDataSet);
