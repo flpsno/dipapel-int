@@ -7,7 +7,9 @@ uses
   uFrmPedidosHistorico in 'uFrmPedidosHistorico.pas' {frmPedidosHistorico},
   Pedido in 'Pedido.pas',
   Configuracao in 'Configuracao.pas',
-  Constantes in 'Constantes.pas';
+  Constantes in 'Constantes.pas',
+  PedidoDAO in 'dao\PedidoDAO.pas',
+  uIPedidoDAO in 'interfaces\uIPedidoDAO.pas';
 
 {$R *.res}
 
