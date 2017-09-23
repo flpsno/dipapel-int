@@ -97,7 +97,7 @@
         <DCCReference Include="uFrmPedidosHistorico.pas">
             <Form>frmPedidosHistorico</Form>
         </DCCReference>
-        <DCCReference Include="Pedido.pas"/>
+        <DCCReference Include="model\Pedido.pas"/>
         <DCCReference Include="Configuracao.pas"/>
         <DCCReference Include="Constantes.pas"/>
         <DCCReference Include="dao\PedidoDAO.pas"/>

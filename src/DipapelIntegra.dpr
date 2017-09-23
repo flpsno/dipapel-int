@@ -5,7 +5,7 @@ uses
   uFrmPrincipal in 'uFrmPrincipal.pas' {frmPrincipal},
   uDtmPrincipal in 'uDtmPrincipal.pas' {dtmPrincipal: TDataModule},
   uFrmPedidosHistorico in 'uFrmPedidosHistorico.pas' {frmPedidosHistorico},
-  Pedido in 'Pedido.pas',
+  Pedido in 'model\Pedido.pas',
   Configuracao in 'Configuracao.pas',
   Constantes in 'Constantes.pas',
   PedidoDAO in 'dao\PedidoDAO.pas',
