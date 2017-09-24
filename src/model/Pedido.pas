@@ -8,38 +8,38 @@ type
   TPedido = class
 
   private
-    FPEDIDO_ELO7: string;
-    FSTATUS_ELO7: string;
-    FDATA_PEDIDO: TDate;
-    FTOTAL_ITENS: SmallInt;
-    FVALOR_TOTAL: Double;
-    FTIPO_FRETE: string;
-    FVALOR_FRETE: Double;
-    FCOMPRADOR: string;
-    FDATA_IMPORTACAO: TDate;
-    FIDPEDIDO: Integer;
-    procedure SetPEDIDO_ELO7(const Value: string);
-    procedure SetSTATUS_ELO7(const Value: string);
-    procedure SetDATA_PEDIDO(const Value: TDate);
-    procedure SetTOTAL_ITENS(const Value: SmallInt);
-    procedure SetVALOR_TOTAL(const Value: Double);
-    procedure SetTIPO_FRETE(const Value: string);
-    procedure SetVALOR_FRETE(const Value: Double);
-    procedure SetCOMPRADOR(const Value: string);
-    procedure SetDATA_IMPORTACAO(const Value: TDate);
-    procedure SetIDPEDIDO(const Value: Integer);
+    FIDPedido: Integer;
+    FCodigo: string;
+    FStatus: string;
+    FDataPedido: TDate;
+    FTotalItens: SmallInt;
+    FValorTotal: Double;
+    FValorFrete: Double;
+    FTipoFrete: string;
+    FDataImportacao: TDate;
+    FComprador: string;
+    procedure SetIDPedido(const Value: Integer);
+    procedure SetCodigo(const Value: string);
+    procedure SetStatus(const Value: string);
+    procedure SetDataPedido(const Value: TDate);
+    procedure SetTotalItens(const Value: SmallInt);
+    procedure SetValorTotal(const Value: Double);
+    procedure SetValorFrete(const Value: Double);
+    procedure SetTipoFrete(const Value: string);
+    procedure SetDataImportacao(const Value: TDate);
+    procedure SetComprador(const Value: string);
 
   public
-    property IDPEDIDO: Integer read FIDPEDIDO write SetIDPEDIDO;
-    property PEDIDO_ELO7: string read FPEDIDO_ELO7 write SetPEDIDO_ELO7;
-    property STATUS_ELO7: string read FSTATUS_ELO7 write SetSTATUS_ELO7;
-    property DATA_PEDIDO: TDate read FDATA_PEDIDO write SetDATA_PEDIDO;
-    property TOTAL_ITENS: SmallInt read FTOTAL_ITENS write SetTOTAL_ITENS;
-    property VALOR_TOTAL: Double read FVALOR_TOTAL write SetVALOR_TOTAL;
-    property TIPO_FRETE: string read FTIPO_FRETE write SetTIPO_FRETE;
-    property VALOR_FRETE: Double read FVALOR_FRETE write SetVALOR_FRETE;
-    property COMPRADOR: string read FCOMPRADOR write SetCOMPRADOR;
-    property DATA_IMPORTACAO: TDate read FDATA_IMPORTACAO write SetDATA_IMPORTACAO;
+    property IDPedido: Integer read FIDPedido write SetIDPedido;
+    property Codigo: string read FCodigo write SetCodigo;
+    property Status: string read FStatus write SetStatus;
+    property DataPedido: TDate read FDataPedido write SetDataPedido;
+    property TotalItens: SmallInt read FTotalItens write SetTotalItens;
+    property ValorTotal: Double read FValorTotal write SetValorTotal;
+    property TipoFrete: string read FTipoFrete write SetTipoFrete;
+    property ValorFrete: Double read FValorFrete write SetValorFrete;
+    property Comprador: string read FComprador write SetComprador;
+    property DataImportacao: TDate read FDataImportacao write SetDataImportacao;
 
     function InserePedido: Integer;
   end;
@@ -56,13 +56,13 @@ var
   sResultado_str: string;
 begin
   dtmPrincipal.stpInsereAtualizaPedidos.Prepare;
-  dtmPrincipal.stpInsereAtualizaPedidos.Params[0].AsString := PEDIDO_ELO7;
-  dtmPrincipal.stpInsereAtualizaPedidos.Params[1].AsString := STATUS_ELO7;
-  dtmPrincipal.stpInsereAtualizaPedidos.Params[2].AsDate := DATA_PEDIDO;
-  dtmPrincipal.stpInsereAtualizaPedidos.Params[3].AsSmallInt := TOTAL_ITENS;
-  dtmPrincipal.stpInsereAtualizaPedidos.Params[4].AsFloat := VALOR_TOTAL;
-  dtmPrincipal.stpInsereAtualizaPedidos.Params[5].AsString := TIPO_FRETE;
-  dtmPrincipal.stpInsereAtualizaPedidos.Params[6].AsFloat := VALOR_FRETE;
+  dtmPrincipal.stpInsereAtualizaPedidos.Params[0].AsString := FCodigo;
+  dtmPrincipal.stpInsereAtualizaPedidos.Params[1].AsString := FStatus;
+  dtmPrincipal.stpInsereAtualizaPedidos.Params[2].AsDate := FDataPedido;
+  dtmPrincipal.stpInsereAtualizaPedidos.Params[3].AsSmallInt := FTotalItens;
+  dtmPrincipal.stpInsereAtualizaPedidos.Params[4].AsFloat := FValorTotal;
+  dtmPrincipal.stpInsereAtualizaPedidos.Params[5].AsString := FTipoFrete;
+  dtmPrincipal.stpInsereAtualizaPedidos.Params[6].AsFloat := FValorFrete;
   dtmPrincipal.stpInsereAtualizaPedidos.Params[7].AsString := COMPRADOR;
   dtmPrincipal.stpInsereAtualizaPedidos.ExecProc;
 
@@ -71,54 +71,54 @@ begin
   Result := iResultado;
 end;
 
-procedure TPedido.SetCOMPRADOR(const Value: string);
+procedure TPedido.SetCodigo(const Value: string);
 begin
-  FCOMPRADOR := Value;
+  FCodigo := Value;
 end;
 
-procedure TPedido.SetDATA_IMPORTACAO(const Value: TDate);
+procedure TPedido.SetComprador(const Value: string);
 begin
-  FDATA_IMPORTACAO := Value;
+  FComprador := Value;
 end;
 
-procedure TPedido.SetDATA_PEDIDO(const Value: TDate);
+procedure TPedido.SetDataImportacao(const Value: TDate);
 begin
-  FDATA_PEDIDO := Value;
+  FDataImportacao := Value;
 end;
 
-procedure TPedido.SetIDPEDIDO(const Value: Integer);
+procedure TPedido.SetDataPedido(const Value: TDate);
 begin
-  FIDPEDIDO := Value;
+  FDataPedido := Value;
 end;
 
-procedure TPedido.SetPEDIDO_ELO7(const Value: string);
+procedure TPedido.SetIDPedido(const Value: Integer);
 begin
-  FPEDIDO_ELO7 := Value;
+  FIDPedido := Value;
 end;
 
-procedure TPedido.SetSTATUS_ELO7(const Value: string);
+procedure TPedido.SetStatus(const Value: string);
 begin
-  FSTATUS_ELO7 := Value;
+  FStatus := Value;
 end;
 
-procedure TPedido.SetTIPO_FRETE(const Value: string);
+procedure TPedido.SetTipoFrete(const Value: string);
 begin
-  FTIPO_FRETE := Value;
+  FTipoFrete := Value;
 end;
 
-procedure TPedido.SetTOTAL_ITENS(const Value: SmallInt);
+procedure TPedido.SetTotalItens(const Value: SmallInt);
 begin
-  FTOTAL_ITENS := Value;
+  FTotalItens := Value;
 end;
 
-procedure TPedido.SetVALOR_FRETE(const Value: Double);
+procedure TPedido.SetValorFrete(const Value: Double);
 begin
-  FVALOR_FRETE := Value;
+  FValorFrete := Value;
 end;
 
-procedure TPedido.SetVALOR_TOTAL(const Value: Double);
+procedure TPedido.SetValorTotal(const Value: Double);
 begin
-  FVALOR_TOTAL := Value;
+  FValorTotal := Value;
 end;
 
 end.

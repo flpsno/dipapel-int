@@ -287,8 +287,6 @@ object frmPrincipal: TfrmPrincipal
           Height = 57
           Align = alTop
           TabOrder = 0
-          ExplicitLeft = 673
-          ExplicitWidth = 491
           object Button1: TButton
             AlignWithMargins = True
             Left = 279
@@ -306,9 +304,6 @@ object frmPrincipal: TfrmPrincipal
             ParentFont = False
             TabOrder = 0
             OnClick = Button1Click
-            ExplicitLeft = 584
-            ExplicitTop = 8
-            ExplicitHeight = 43
           end
           object grp1: TGroupBox
             AlignWithMargins = True

@@ -93,15 +93,15 @@ begin
   begin
     pedidoAux := TPedido.Create;
     pedidoAux.IDPEDIDO := FQueryAux.FieldByName('idpedido').AsInteger;
-    pedidoAux.PEDIDO_ELO7 := FQueryAux.FieldByName('pedido_elo7').AsString;
-    pedidoAux.STATUS_ELO7 := FQueryAux.FieldByName('status_elo7').AsString;
-    pedidoAux.DATA_PEDIDO := FQueryAux.FieldByName('data_pedido').AsDateTime;
-    pedidoAux.TOTAL_ITENS := FQueryAux.FieldByName('total_itens').AsInteger;
-    pedidoAux.VALOR_TOTAL := FQueryAux.FieldByName('valor_total').AsFloat;
-    pedidoAux.TIPO_FRETE := FQueryAux.FieldByName('tipo_frete').AsString;
-    pedidoAux.VALOR_FRETE := FQueryAux.FieldByName('valor_frete').AsFloat;
+    pedidoAux.Codigo := FQueryAux.FieldByName('pedido_elo7').AsString;
+    pedidoAux.Status := FQueryAux.FieldByName('status_elo7').AsString;
+    pedidoAux.DataPedido := FQueryAux.FieldByName('data_pedido').AsDateTime;
+    pedidoAux.TotalItens := FQueryAux.FieldByName('total_itens').AsInteger;
+    pedidoAux.ValorTotal := FQueryAux.FieldByName('valor_total').AsFloat;
+    pedidoAux.TipoFrete := FQueryAux.FieldByName('tipo_frete').AsString;
+    pedidoAux.ValorFrete := FQueryAux.FieldByName('valor_frete').AsFloat;
     pedidoAux.COMPRADOR := FQueryAux.FieldByName('comprador').AsString;
-    pedidoAux.DATA_IMPORTACAO := FQueryAux.FieldByName('data_importacao').AsDateTime;
+    pedidoAux.DataImportacao := FQueryAux.FieldByName('data_importacao').AsDateTime;
     Result.Add(pedidoAux);
 
     FQueryAux.Next;

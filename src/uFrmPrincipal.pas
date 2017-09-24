@@ -120,14 +120,14 @@ begin
     begin
       cdsPedidos.Append;
       cdsPedidosIDPEDIDO.AsInteger := pedidoAux.IDPEDIDO;
-      cdsPedidosPEDIDO_ELO7.AsString := pedidoAux.PEDIDO_ELO7;
+      cdsPedidosPEDIDO_ELO7.AsString := pedidoAux.Codigo;
       cdsPedidosCOMPRADOR.AsString := pedidoAux.COMPRADOR;
-      cdsPedidosSTATUS_ELO7.AsString := pedidoAux.STATUS_ELO7;
-      cdsPedidosDATA_PEDIDO.AsDateTime := pedidoAux.DATA_PEDIDO;
-      cdsPedidosTOTAL_ITENS.AsInteger := pedidoAux.TOTAL_ITENS;
-      cdsPedidosVALOR_TOTAL.AsFloat := pedidoAux.VALOR_TOTAL;
-      cdsPedidosTIPO_FRETE.AsString := pedidoAux.TIPO_FRETE;
-      cdsPedidosVALOR_FRETE.AsFloat := pedidoAux.VALOR_FRETE;
+      cdsPedidosSTATUS_ELO7.AsString := pedidoAux.Status;
+      cdsPedidosDATA_PEDIDO.AsDateTime := pedidoAux.DataPedido;
+      cdsPedidosTOTAL_ITENS.AsInteger := pedidoAux.TotalItens;
+      cdsPedidosVALOR_TOTAL.AsFloat := pedidoAux.ValorTotal;
+      cdsPedidosTIPO_FRETE.AsString := pedidoAux.TipoFrete;
+      cdsPedidosVALOR_FRETE.AsFloat := pedidoAux.ValorFrete;
       cdsPedidos.Post;
     end;
   finally
@@ -258,13 +258,13 @@ begin
       begin
         objPedido := TPedido.Create;
         try
-          objPedido.PEDIDO_ELO7 := cdsPrincipalPEDIDO_ELO7.AsString;
-          objPedido.STATUS_ELO7 := cdsPrincipalSTATUS_ELO7.AsString;
-          objPedido.DATA_PEDIDO := cdsPrincipalDATA_PEDIDO.AsDateTime;
-          objPedido.TOTAL_ITENS := cdsPrincipalTOTAL_ITENS.AsInteger;
-          objPedido.VALOR_TOTAL := cdsPrincipalVALOR_TOTAL.AsFloat;
-          objPedido.TIPO_FRETE := cdsPrincipalTIPO_FRETE.AsString;
-          objPedido.VALOR_FRETE := cdsPrincipalVALOR_FRETE.AsFloat;
+          objPedido.Codigo := cdsPrincipalPEDIDO_ELO7.AsString;
+          objPedido.Status := cdsPrincipalSTATUS_ELO7.AsString;
+          objPedido.DataPedido := cdsPrincipalDATA_PEDIDO.AsDateTime;
+          objPedido.TotalItens := cdsPrincipalTOTAL_ITENS.AsInteger;
+          objPedido.ValorTotal := cdsPrincipalVALOR_TOTAL.AsFloat;
+          objPedido.TipoFrete := cdsPrincipalTIPO_FRETE.AsString;
+          objPedido.ValorFrete := cdsPrincipalVALOR_FRETE.AsFloat;
           objPedido.COMPRADOR := cdsPrincipalCOMPRADOR.AsString;
 
           case objPedido.InserePedido of
