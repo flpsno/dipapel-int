@@ -18,7 +18,7 @@ type
     tsPedidos: TTabSheet;
     DBGrid1: TDBGrid;
     Panel3: TPanel;
-    Button1: TButton;
+    btnPesquisar: TButton;
     odgPrincipal: TOpenDialog;
     cdsPrincipal: TClientDataSet;
     dtsPrincipal: TDataSource;
@@ -61,11 +61,6 @@ type
     tmr1: TTimer;
     cdsPedidos: TClientDataSet;
     dtsPedidos: TDataSource;
-    grp1: TGroupBox;
-    lbl4: TLabel;
-    dtpDtImportacaoAte: TDateTimePicker;
-    lbl5: TLabel;
-    dtpDtImportacaoDe: TDateTimePicker;
     cdsPedidosPEDIDO_ELO7: TStringField;
     cdsPedidosCOMPRADOR: TStringField;
     cdsPedidosSTATUS_ELO7: TStringField;
@@ -75,9 +70,20 @@ type
     cdsPedidosTIPO_FRETE: TStringField;
     cdsPedidosVALOR_FRETE: TFloatField;
     cdsPedidosIDPEDIDO: TIntegerField;
-    edtCodigoPedido: TEdit;
+    cdsPedidosDATA_IMPORTACAO: TDateField;
+    pnl2: TPanel;
+    lbl6: TLabel;
+    cbbOpcoesPesquisa: TComboBox;
+    pnlConteudo: TPanel;
     lbl3: TLabel;
-    procedure Button1Click(Sender: TObject);
+    edtCodigoPedido: TEdit;
+    pnlDataDeAte: TPanel;
+    grp1: TGroupBox;
+    lbl4: TLabel;
+    lbl5: TLabel;
+    dtpDtImportacaoAte: TDateTimePicker;
+    dtpDtImportacaoDe: TDateTimePicker;
+    procedure btnPesquisarClick(Sender: TObject);
     procedure btnArquivoClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actCarregaArquivoExecute(Sender: TObject);
@@ -93,6 +99,7 @@ type
     procedure btnSalvarClick(Sender: TObject);
     procedure tmr1Timer(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure cbbOpcoesPesquisaChange(Sender: TObject);
   private
     { Private declarations }
     FController: TController_TelaPrincipal;
@@ -110,14 +117,18 @@ implementation
 
 uses uDtmPrincipal, uFrmPedidosHistorico, Configuracao;
 
-procedure TfrmPrincipal.Button1Click(Sender: TObject);
+procedure TfrmPrincipal.btnPesquisarClick(Sender: TObject);
 var
   listaPedidos: TObjectList<TPedido>;
   pedidoAux: TPedido;
 begin
   cdsPedidos.EmptyDataSet;
 
-  listaPedidos := FController.ConsultarPedidos(dtpDtImportacaoDe.Date, dtpDtImportacaoAte.Date, edtCodigoPedido.Text);
+  case cbbOpcoesPesquisa.ItemIndex of
+    0: listaPedidos :=  FController.ConsultarPedidos(tpCodigo, edtCodigoPedido.Text, Null);
+    1: listaPedidos :=  FController.ConsultarPedidos(tpDataImportacao, dtpDtImportacaoDe.Date, dtpDtImportacaoAte.Date);
+  end;
+
   try
     for pedidoAux in listaPedidos do
     begin
@@ -131,6 +142,7 @@ begin
       cdsPedidosVALOR_TOTAL.AsFloat := pedidoAux.ValorTotal;
       cdsPedidosTIPO_FRETE.AsString := pedidoAux.TipoFrete;
       cdsPedidosVALOR_FRETE.AsFloat := pedidoAux.ValorFrete;
+      cdsPedidosDATA_IMPORTACAO.AsDateTime := pedidoAux.DataImportacao;
       cdsPedidos.Post;
     end;
   finally
@@ -327,6 +339,12 @@ begin
   end;
 end;
 
+procedure TfrmPrincipal.cbbOpcoesPesquisaChange(Sender: TObject);
+begin
+  pnlConteudo.Visible := cbbOpcoesPesquisa.ItemIndex in [0];
+  pnlDataDeAte.Visible := cbbOpcoesPesquisa.ItemIndex in [1];
+end;
+
 procedure TfrmPrincipal.btnArquivoClick(Sender: TObject);
 var
   Config: TConfiguracao;
@@ -371,6 +389,8 @@ begin
   //
   dtpDtImportacaoDe.Date := Now;
   dtpDtImportacaoAte.Date := Now;
+
+  cbbOpcoesPesquisaChange(cbbOpcoesPesquisa);
 
 end;
 

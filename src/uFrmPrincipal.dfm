@@ -2,8 +2,8 @@ object frmPrincipal: TfrmPrincipal
   Left = 0
   Top = 0
   Caption = 'Principal'
-  ClientHeight = 589
-  ClientWidth = 738
+  ClientHeight = 562
+  ClientWidth = 784
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,7 +20,7 @@ object frmPrincipal: TfrmPrincipal
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 738
+    Width = 784
     Height = 51
     Align = alTop
     BevelOuter = bvNone
@@ -34,42 +34,51 @@ object frmPrincipal: TfrmPrincipal
     ParentCtl3D = False
     ParentFont = False
     TabOrder = 0
+    ExplicitWidth = 738
   end
   object Panel2: TPanel
     Left = 0
     Top = 51
-    Width = 738
-    Height = 519
+    Width = 784
+    Height = 492
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel2'
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 1
+    ExplicitWidth = 738
+    ExplicitHeight = 519
     object pgcPrincipal: TPageControl
       Left = 0
       Top = 0
-      Width = 738
-      Height = 519
+      Width = 784
+      Height = 492
       ActivePage = tsPedidos
       Align = alClient
       TabOrder = 0
       OnChange = pgcPrincipalChange
+      ExplicitWidth = 738
+      ExplicitHeight = 519
       object tsImport: TTabSheet
         Caption = 'Import'
+        ExplicitWidth = 730
+        ExplicitHeight = 491
         object pnlRodape: TPanel
           AlignWithMargins = True
           Left = 3
-          Top = 240
-          Width = 724
+          Top = 213
+          Width = 770
           Height = 248
           Align = alBottom
           ParentColor = True
           TabOrder = 0
+          ExplicitTop = 240
+          ExplicitWidth = 724
           object dbgPrincipal: TDBGrid
             Left = 1
             Top = 35
-            Width = 722
+            Width = 768
             Height = 212
             Align = alClient
             DataSource = dtmPrincipal.dtsResultadoImport
@@ -120,7 +129,7 @@ object frmPrincipal: TfrmPrincipal
           object pnlResultado: TPanel
             Left = 1
             Top = 1
-            Width = 722
+            Width = 768
             Height = 34
             Align = alTop
             Caption = 'Resultado'
@@ -131,21 +140,24 @@ object frmPrincipal: TfrmPrincipal
             Font.Style = [fsBold]
             ParentFont = False
             TabOrder = 1
+            ExplicitWidth = 722
           end
         end
         object pnl1: TPanel
           Left = 0
           Top = 0
-          Width = 730
-          Height = 237
+          Width = 776
+          Height = 210
           Align = alClient
           ParentColor = True
           TabOrder = 1
+          ExplicitWidth = 730
+          ExplicitHeight = 237
           object pb1: TProgressBar
             AlignWithMargins = True
             Left = 6
-            Top = 210
-            Width = 718
+            Top = 183
+            Width = 764
             Height = 16
             Margins.Left = 5
             Margins.Top = 10
@@ -153,6 +165,8 @@ object frmPrincipal: TfrmPrincipal
             Margins.Bottom = 10
             Align = alBottom
             TabOrder = 0
+            ExplicitTop = 210
+            ExplicitWidth = 718
           end
           object edtCaminhoArquivo: TEdit
             Left = 6
@@ -189,8 +203,8 @@ object frmPrincipal: TfrmPrincipal
           object dbg1: TDBGrid
             Left = 1
             Top = 88
-            Width = 728
-            Height = 112
+            Width = 774
+            Height = 85
             Align = alBottom
             Anchors = [akLeft, akTop, akRight, akBottom]
             DataSource = dtsPrincipal
@@ -220,11 +234,14 @@ object frmPrincipal: TfrmPrincipal
       object tsPedidos: TTabSheet
         Caption = 'Pedidos'
         ImageIndex = 1
+        ExplicitWidth = 730
+        ExplicitHeight = 491
         object DBGrid1: TDBGrid
-          Left = 0
-          Top = 57
-          Width = 730
-          Height = 434
+          AlignWithMargins = True
+          Left = 3
+          Top = 60
+          Width = 770
+          Height = 401
           Align = alClient
           DataSource = dtsPedidos
           TabOrder = 1
@@ -237,31 +254,42 @@ object frmPrincipal: TfrmPrincipal
             item
               Expanded = False
               FieldName = 'IDPEDIDO'
+              Width = 37
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'PEDIDO_ELO7'
+              Width = 73
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DATA_IMPORTACAO'
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'COMPRADOR'
+              Width = 300
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'STATUS_ELO7'
+              Width = 114
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'DATA_PEDIDO'
+              Width = 75
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'TOTAL_ITENS'
+              Width = 71
               Visible = True
             end
             item
@@ -283,20 +311,14 @@ object frmPrincipal: TfrmPrincipal
         object Panel3: TPanel
           Left = 0
           Top = 0
-          Width = 730
+          Width = 776
           Height = 57
           Align = alTop
           TabOrder = 0
-          object lbl3: TLabel
-            Left = 279
-            Top = 11
-            Width = 83
-            Height = 13
-            Caption = 'C'#243'digo do Pedido'
-          end
-          object Button1: TButton
+          ExplicitWidth = 730
+          object btnPesquisar: TButton
             AlignWithMargins = True
-            Left = 603
+            Left = 649
             Top = 6
             Width = 123
             Height = 47
@@ -310,65 +332,120 @@ object frmPrincipal: TfrmPrincipal
             Font.Style = [fsBold]
             ParentFont = False
             TabOrder = 0
-            OnClick = Button1Click
+            OnClick = btnPesquisarClick
             ExplicitLeft = 279
             ExplicitTop = 4
           end
-          object grp1: TGroupBox
-            AlignWithMargins = True
-            Left = 4
-            Top = 4
-            Width = 269
-            Height = 49
+          object pnl2: TPanel
+            Left = 1
+            Top = 1
+            Width = 200
+            Height = 55
             Align = alLeft
-            Caption = 'Data de Importa'#231#227'o '
             TabOrder = 1
-            ExplicitTop = 2
-            object lbl4: TLabel
-              Left = 3
-              Top = 22
-              Width = 17
+            object lbl6: TLabel
+              Left = 2
+              Top = 7
+              Width = 68
               Height = 13
-              Caption = 'De:'
+              Caption = 'Perquisar por:'
             end
-            object lbl5: TLabel
-              Left = 132
-              Top = 22
-              Width = 21
-              Height = 13
-              Caption = 'At'#233':'
-            end
-            object dtpDtImportacaoAte: TDateTimePicker
-              Left = 159
-              Top = 19
-              Width = 97
+            object cbbOpcoesPesquisa: TComboBox
+              Left = 2
+              Top = 26
+              Width = 185
               Height = 21
-              Date = 42805.000000000000000000
-              Time = 42805.000000000000000000
+              Style = csDropDownList
+              ItemIndex = 0
               TabOrder = 0
-            end
-            object dtpDtImportacaoDe: TDateTimePicker
-              Left = 26
-              Top = 19
-              Width = 97
-              Height = 21
-              Date = 42805.000000000000000000
-              Time = 42805.000000000000000000
-              TabOrder = 1
+              Text = 'C'#243'digo'
+              OnChange = cbbOpcoesPesquisaChange
+              Items.Strings = (
+                'C'#243'digo'
+                'Data de Importa'#231#227'o')
             end
           end
-          object edtCodigoPedido: TEdit
-            Left = 279
-            Top = 30
-            Width = 121
-            Height = 21
+          object pnlConteudo: TPanel
+            Left = 201
+            Top = 1
+            Width = 136
+            Height = 55
+            Align = alLeft
             TabOrder = 2
+            object lbl3: TLabel
+              Left = 6
+              Top = 7
+              Width = 51
+              Height = 13
+              Caption = 'Conte'#250'do:'
+            end
+            object edtCodigoPedido: TEdit
+              Left = 6
+              Top = 27
+              Width = 121
+              Height = 21
+              TabOrder = 0
+            end
+          end
+          object pnlDataDeAte: TPanel
+            Left = 337
+            Top = 1
+            Width = 280
+            Height = 55
+            Align = alLeft
+            TabOrder = 3
+            object grp1: TGroupBox
+              Left = 1
+              Top = 1
+              Width = 269
+              Height = 53
+              Align = alLeft
+              Caption = 'Data'
+              TabOrder = 0
+              ExplicitLeft = -3
+              ExplicitTop = 4
+              ExplicitHeight = 49
+              object lbl4: TLabel
+                Left = 3
+                Top = 22
+                Width = 17
+                Height = 20
+                Caption = 'De:'
+              end
+              object lbl5: TLabel
+                Left = 132
+                Top = 22
+                Width = 21
+                Height = 13
+                Caption = 'At'#233':'
+              end
+              object dtpDtImportacaoAte: TDateTimePicker
+                Left = 159
+                Top = 19
+                Width = 97
+                Height = 28
+                Date = 42805.000000000000000000
+                Time = 42805.000000000000000000
+                TabOrder = 0
+              end
+              object dtpDtImportacaoDe: TDateTimePicker
+                Left = 26
+                Top = 19
+                Width = 97
+                Height = 27
+                Date = 42805.000000000000000000
+                Time = 42805.000000000000000000
+                TabOrder = 1
+              end
+            end
           end
         end
       end
       object tsConfig: TTabSheet
         Caption = 'Configura'#231#227'o'
         ImageIndex = 2
+        ExplicitWidth = 730
+        ExplicitHeight = 491
         object lbl1: TLabel
           Left = 3
           Top = 56
@@ -430,8 +507,8 @@ object frmPrincipal: TfrmPrincipal
   end
   object stbPrincipal: TStatusBar
     Left = 0
-    Top = 570
-    Width = 738
+    Top = 543
+    Width = 784
     Height = 19
     Panels = <
       item
@@ -443,6 +520,8 @@ object frmPrincipal: TfrmPrincipal
       item
         Width = 300
       end>
+    ExplicitTop = 570
+    ExplicitWidth = 738
   end
   object odgPrincipal: TOpenDialog
     Filter = 'CSV|*.csv'
@@ -551,24 +630,31 @@ object frmPrincipal: TfrmPrincipal
     Left = 272
     Top = 232
     object cdsPedidosPEDIDO_ELO7: TStringField
+      DisplayLabel = 'C'#243'digo'
       FieldName = 'PEDIDO_ELO7'
       Size = 15
     end
     object cdsPedidosCOMPRADOR: TStringField
+      DisplayLabel = 'Comprador'
       FieldName = 'COMPRADOR'
       Size = 100
     end
     object cdsPedidosSTATUS_ELO7: TStringField
+      DisplayLabel = 'Status'
       FieldName = 'STATUS_ELO7'
       Size = 50
     end
     object cdsPedidosDATA_PEDIDO: TDateField
+      DisplayLabel = 'Dt. Pedido'
       FieldName = 'DATA_PEDIDO'
+      EditMask = '!99/99/0000;1;_'
     end
     object cdsPedidosTOTAL_ITENS: TSmallintField
+      DisplayLabel = 'Total Itens'
       FieldName = 'TOTAL_ITENS'
     end
     object cdsPedidosVALOR_TOTAL: TFloatField
+      DisplayLabel = 'V. Total'
       FieldName = 'VALOR_TOTAL'
     end
     object cdsPedidosTIPO_FRETE: TStringField
@@ -579,7 +665,12 @@ object frmPrincipal: TfrmPrincipal
       FieldName = 'VALOR_FRETE'
     end
     object cdsPedidosIDPEDIDO: TIntegerField
+      DisplayLabel = 'ID'
       FieldName = 'IDPEDIDO'
+    end
+    object cdsPedidosDATA_IMPORTACAO: TDateField
+      DisplayLabel = 'Dt. Importa'#231#227'o'
+      FieldName = 'DATA_IMPORTACAO'
     end
   end
   object dtsPedidos: TDataSource

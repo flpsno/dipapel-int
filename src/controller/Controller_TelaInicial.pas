@@ -6,6 +6,8 @@ uses
   FireDAC.Comp.Client, System.Generics.Collections, Pedido, PedidoDAO;
 
 type
+  TTipoPesquisa = (tpCodigo, tpDataImportacao);
+
   TController_TelaPrincipal = class
 
   private
@@ -16,7 +18,8 @@ type
     constructor Create(pConexao: TFDConnection);
     destructor Destroy; override;
 
-    function ConsultarPedidos(pDateImpDe, pDateImpAte: TDate; pCodigoPedido: string): TObjectList<TPedido>;
+    function ConsultarPedidos(pTipoPesquisa: TTipoPesquisa; pCampo1, pCampo2: Variant): TObjectList<TPedido>;
+
 
 
   end;
@@ -25,13 +28,14 @@ implementation
 
 { TController_TelaPrincipal }
 
-function TController_TelaPrincipal.ConsultarPedidos(pDateImpDe,
-  pDateImpAte: TDate; pCodigoPedido: string): TObjectList<TPedido>;
+function TController_TelaPrincipal.ConsultarPedidos(pTipoPesquisa: TTipoPesquisa; pCampo1, pCampo2: Variant): TObjectList<TPedido>;
 begin
-  if (pCodigoPedido <> '') then
-    Result := FPedidoDAO.ObterPorCodigo(pCodigoPedido)
-  else
-    Result := FPedidoDAO.ObterPorDataImportacao(pDateImpDe, pDateImpAte);
+  case pTipoPesquisa  of
+
+    tpCodigo: Result := FPedidoDAO.ObterPorCodigo(pCampo1);
+
+    tpDataImportacao: Result := FPedidoDAO.ObterPorDataImportacao(pCampo1, pCampo2);
+  end;
 end;
 
 constructor TController_TelaPrincipal.Create(pConexao: TFDConnection);
