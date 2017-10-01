@@ -287,14 +287,21 @@ object frmPrincipal: TfrmPrincipal
           Height = 57
           Align = alTop
           TabOrder = 0
+          object lbl3: TLabel
+            Left = 279
+            Top = 11
+            Width = 83
+            Height = 13
+            Caption = 'C'#243'digo do Pedido'
+          end
           object Button1: TButton
             AlignWithMargins = True
-            Left = 279
+            Left = 603
             Top = 6
             Width = 123
             Height = 47
             Margins.Top = 5
-            Align = alLeft
+            Align = alRight
             Caption = 'Consultar'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -304,6 +311,8 @@ object frmPrincipal: TfrmPrincipal
             ParentFont = False
             TabOrder = 0
             OnClick = Button1Click
+            ExplicitLeft = 279
+            ExplicitTop = 4
           end
           object grp1: TGroupBox
             AlignWithMargins = True
@@ -314,6 +323,7 @@ object frmPrincipal: TfrmPrincipal
             Align = alLeft
             Caption = 'Data de Importa'#231#227'o '
             TabOrder = 1
+            ExplicitTop = 2
             object lbl4: TLabel
               Left = 3
               Top = 22
@@ -346,6 +356,13 @@ object frmPrincipal: TfrmPrincipal
               Time = 42805.000000000000000000
               TabOrder = 1
             end
+          end
+          object edtCodigoPedido: TEdit
+            Left = 279
+            Top = 30
+            Width = 121
+            Height = 21
+            TabOrder = 2
           end
         end
       end

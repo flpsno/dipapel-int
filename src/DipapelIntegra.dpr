@@ -9,7 +9,8 @@ uses
   Configuracao in 'Configuracao.pas',
   Constantes in 'Constantes.pas',
   PedidoDAO in 'dao\PedidoDAO.pas',
-  uIPedidoDAO in 'interfaces\uIPedidoDAO.pas';
+  uIPedidoDAO in 'interfaces\uIPedidoDAO.pas',
+  Controller_TelaInicial in 'controller\Controller_TelaInicial.pas';
 
 {$R *.res}
 

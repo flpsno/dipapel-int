@@ -63,7 +63,7 @@ begin
   dtmPrincipal.stpInsereAtualizaPedidos.Params[4].AsFloat := FValorTotal;
   dtmPrincipal.stpInsereAtualizaPedidos.Params[5].AsString := FTipoFrete;
   dtmPrincipal.stpInsereAtualizaPedidos.Params[6].AsFloat := FValorFrete;
-  dtmPrincipal.stpInsereAtualizaPedidos.Params[7].AsString := COMPRADOR;
+  dtmPrincipal.stpInsereAtualizaPedidos.Params[7].AsString := FComprador;
   dtmPrincipal.stpInsereAtualizaPedidos.ExecProc;
 
   iResultado := dtmPrincipal.stpInsereAtualizaPedidos.Params[8].AsInteger;

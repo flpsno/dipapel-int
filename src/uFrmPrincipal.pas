@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.DBGrids, Vcl.ComCtrls,
   Vcl.ExtCtrls, Vcl.StdCtrls, Data.DB, Datasnap.DBClient, Vcl.CheckLst,
   System.Actions, Vcl.ActnList, MIDASLIB, Vcl.Mask, Vcl.DBCtrls, Vcl.DBActns,
-  Vcl.Buttons, Vcl.FileCtrl, Pedido, Constantes, PedidoDAO, System.Generics.Collections;
+  Vcl.Buttons, Vcl.FileCtrl, Pedido, Constantes, System.Generics.Collections, Controller_TelaInicial;
 
 type
   TfrmPrincipal = class(TForm)
@@ -75,6 +75,8 @@ type
     cdsPedidosTIPO_FRETE: TStringField;
     cdsPedidosVALOR_FRETE: TFloatField;
     cdsPedidosIDPEDIDO: TIntegerField;
+    edtCodigoPedido: TEdit;
+    lbl3: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure btnArquivoClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -93,7 +95,8 @@ type
     procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
-    FPedidoDAO: TPedidoDAO;
+    FController: TController_TelaPrincipal;
+
   public
     { Public declarations }
   end;
@@ -114,7 +117,7 @@ var
 begin
   cdsPedidos.EmptyDataSet;
 
-  listaPedidos := FPedidoDAO.ObterPorDataImportacao(dtpDtImportacaoDe.Date, dtpDtImportacaoAte.Date);
+  listaPedidos := FController.ConsultarPedidos(dtpDtImportacaoDe.Date, dtpDtImportacaoAte.Date, edtCodigoPedido.Text);
   try
     for pedidoAux in listaPedidos do
     begin
@@ -351,13 +354,13 @@ begin
   cdsPedidos.CreateDataSet;
   cdsPedidos.Open;
 
-  FPedidoDAO := TPedidoDAO.Create(dtmPrincipal.conPrincipal);
+  FController := TController_TelaPrincipal.Create(dtmPrincipal.conPrincipal);
 end;
 
 procedure TfrmPrincipal.FormDestroy(Sender: TObject);
 begin
-  if (FPedidoDAO <> nil) then
-    FPedidoDAO.Free;
+  if (FController <> nil) then
+    FController.Free;
 end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);
