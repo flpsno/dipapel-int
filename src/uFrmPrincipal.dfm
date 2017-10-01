@@ -54,7 +54,7 @@ object frmPrincipal: TfrmPrincipal
       Top = 0
       Width = 784
       Height = 492
-      ActivePage = tsPedidos
+      ActivePage = tsImport
       Align = alClient
       TabOrder = 0
       OnChange = pgcPrincipalChange

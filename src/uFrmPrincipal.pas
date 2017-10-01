@@ -124,12 +124,14 @@ var
 begin
   cdsPedidos.EmptyDataSet;
 
-  case cbbOpcoesPesquisa.ItemIndex of
-    0: listaPedidos :=  FController.ConsultarPedidos(tpCodigo, edtCodigoPedido.Text, Null);
-    1: listaPedidos :=  FController.ConsultarPedidos(tpDataImportacao, dtpDtImportacaoDe.Date, dtpDtImportacaoAte.Date);
-  end;
-
+  listaPedidos := TObjectList<TPedido>.Create;
   try
+    case cbbOpcoesPesquisa.ItemIndex of
+      0: FController.ConsultarPedidos(tpCodigo, edtCodigoPedido.Text, Null, listaPedidos);
+      1: FController.ConsultarPedidos(tpDataImportacao, dtpDtImportacaoDe.Date, dtpDtImportacaoAte.Date, listaPedidos);
+    end;
+
+
     for pedidoAux in listaPedidos do
     begin
       cdsPedidos.Append;

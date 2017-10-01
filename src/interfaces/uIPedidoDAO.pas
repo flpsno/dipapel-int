@@ -11,9 +11,9 @@ type
 
     function Inserir(pPedido: TPedido): Boolean;
     function Atualizar(pPedido: TPedido): Boolean;
-    function ObterTodos: TObjectList<TPedido>;
-    function ObterPorDataImportacao(pDataDe, pDataAte: TDate): TObjectList<TPedido>;
-    function ObterPorCodigo(pCodigo: string): TObjectList<TPedido>;
+    function ObterTodos(var retListaPedidos: TObjectList<TPedido>): Boolean;
+    function ObterPorDataImportacao(pDataDe, pDataAte: TDate; var retListaPedidos: TObjectList<TPedido>): Boolean;
+    function ObterPorCodigo(pCodigo: string; var retPedido: TPedido): Boolean;
 
   end;
 

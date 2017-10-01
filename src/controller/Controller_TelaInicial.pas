@@ -18,23 +18,36 @@ type
     constructor Create(pConexao: TFDConnection);
     destructor Destroy; override;
 
-    function ConsultarPedidos(pTipoPesquisa: TTipoPesquisa; pCampo1, pCampo2: Variant): TObjectList<TPedido>;
-
-
-
+    function ConsultarPedidos(pTipoPesquisa: TTipoPesquisa; pCampo1, pCampo2: Variant; var retListaPedidos: TObjectList<TPedido>): Boolean;
+    function InserirOuAtualiarPedido(pPedido: TPedido): Boolean;
   end;
 
 implementation
 
 { TController_TelaPrincipal }
 
-function TController_TelaPrincipal.ConsultarPedidos(pTipoPesquisa: TTipoPesquisa; pCampo1, pCampo2: Variant): TObjectList<TPedido>;
+function TController_TelaPrincipal.ConsultarPedidos(pTipoPesquisa: TTipoPesquisa; pCampo1, pCampo2: Variant; var retListaPedidos: TObjectList<TPedido>): Boolean;
+var
+  pedidoAux: TPedido;
 begin
   case pTipoPesquisa  of
 
-    tpCodigo: Result := FPedidoDAO.ObterPorCodigo(pCampo1);
+    tpCodigo:
+    begin
+      pedidoAux := TPedido.Create;
+      if not FPedidoDAO.ObterPorCodigo(pCampo1, pedidoAux) then
+      begin
+        pedidoAux.Free;
+        Exit;
+      end;
 
-    tpDataImportacao: Result := FPedidoDAO.ObterPorDataImportacao(pCampo1, pCampo2);
+      retListaPedidos.Add(pedidoAux);
+    end;
+
+    tpDataImportacao:
+    begin
+      Result := FPedidoDAO.ObterPorDataImportacao(pCampo1, pCampo2, retListaPedidos);
+    end;
   end;
 end;
 
@@ -51,6 +64,13 @@ begin
     FPedidoDAO.Free;
 
   inherited;
+end;
+
+function TController_TelaPrincipal.InserirOuAtualiarPedido(pPedido: TPedido): Boolean;
+begin
+
+
+ //
 end;
 
 end.
